@@ -62,9 +62,15 @@ typedef int sys_prot_t;
 #define X32_F "x"
 
 #define PACK_STRUCT_FIELD(x) x
-#define PACK_STRUCT_STRUCT __attribute__((packed))
+#if defined(__GNUC__)  /* ES1902-03 */
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_END
+#define PACK_STRUCT_STRUCT __attribute__((packed))
+#else
+#define PACK_STRUCT_BEGIN   __declspec(align(1))
+#define PACK_STRUCT_END
+#define PACK_STRUCT_STRUCT
+#endif
 
 #include <stdio.h>
 

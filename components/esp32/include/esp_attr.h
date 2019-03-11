@@ -22,6 +22,7 @@
 //and all variables in shared RAM. These macros can be used to redirect
 //particular functions/variables to other memory regions.
 
+#if defined(__GNUC__) /* ES1902-03 */
 // Forces code into IRAM instead of flash
 #define IRAM_ATTR _SECTION_ATTR_IMPL(".iram1", __COUNTER__)
 
@@ -30,6 +31,11 @@
 
 // Forces data to be 4 bytes aligned
 #define WORD_ALIGNED_ATTR __attribute__((aligned(4)))
+#else
+#define IRAM_ATTR
+#define DRAM_ATTR
+#define WORD_ALIGNED_ATTR 
+#endif
 
 // Forces data to be placed to DMA-capable places
 #define DMA_ATTR WORD_ALIGNED_ATTR DRAM_ATTR
@@ -38,6 +44,7 @@
 // Use as ets_printf(DRAM_STR("Hello world!\n"));
 #define DRAM_STR(str) (__extension__({static const DRAM_ATTR char __c[] = (str); (const char *)&__c;}))
 
+#if defined(__GNUC__) /* ES1902-03 */
 // Forces code into RTC fast memory. See "docs/deep-sleep-stub.rst"
 #define RTC_IRAM_ATTR _SECTION_ATTR_IMPL(".rtc.text", __COUNTER__)
 
@@ -72,6 +79,17 @@
 
 // Forces to not inline function
 #define NOINLINE_ATTR __attribute__((noinline))
+#else
+#define RTC_IRAM_ATTR
+#define EXT_RAM_ATTR
+#define RTC_DATA_ATTR
+#define RTC_RODATA_ATTR
+#define RTC_SLOW_ATTR
+#define RTC_FAST_ATTR
+#define __NOINIT_ATTR
+#define RTC_NOINIT_ATTR
+#define NOINLINE_ATTR
+#endif
 
 // Implementation for a unique custom section
 //

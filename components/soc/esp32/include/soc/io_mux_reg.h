@@ -90,6 +90,7 @@
  *     PIN_PULLDWN_DIS(GPIO_PIN_MUX_REG[x]) ->  gpio_pulldown_dis(x)
  *
 */
+#if defined(__GNUC__) /* ES1902-03 */
 static inline void __attribute__ ((deprecated)) PIN_PULLUP_DIS(uint32_t PIN_NAME) 
 {
     REG_CLR_BIT(PIN_NAME, FUN_PU);
@@ -109,6 +110,7 @@ static inline void __attribute__ ((deprecated)) PIN_PULLDWN_EN(uint32_t PIN_NAME
 {
     REG_SET_BIT(PIN_NAME, FUN_PD);
 }
+#endif
 
 
 #define PIN_FUNC_SELECT(PIN_NAME, FUNC)      REG_SET_FIELD(PIN_NAME, MCU_SEL, FUNC)

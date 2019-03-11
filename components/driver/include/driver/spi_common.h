@@ -218,7 +218,11 @@ esp_err_t spicommon_bus_initialize_io(spi_host_device_t host, const spi_bus_conf
  *         - ESP_ERR_INVALID_ARG   if parameter is invalid
  *         - ESP_OK                on success
  */
-esp_err_t spicommon_bus_free_io(spi_host_device_t host) __attribute__((deprecated));
+esp_err_t spicommon_bus_free_io(spi_host_device_t host)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief Free the IO used by a SPI peripheral
@@ -251,7 +255,11 @@ void spicommon_cs_initialize(spi_host_device_t host, int cs_io_num, int cs_num, 
  * @param host SPI peripheral
  * @param cs_num CS id to free
  */
-void spicommon_cs_free(spi_host_device_t host, int cs_num) __attribute__((deprecated));
+void spicommon_cs_free(spi_host_device_t host, int cs_num)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief Free a chip select line

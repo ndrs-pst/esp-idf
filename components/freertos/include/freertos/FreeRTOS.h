@@ -74,7 +74,9 @@
  * Include the generic headers required for the FreeRTOS port being used.
  */
 #include <stddef.h>
+#if defined(__GNUC__) /* ES1902-03 */
 #include "sys/reent.h"
+#endif
 
 /*
  * If stdint.h cannot be located then:
@@ -925,7 +927,9 @@ typedef struct xSTATIC_TCB
 		uint32_t		ulDummy16;
 	#endif
 	#if ( configUSE_NEWLIB_REENTRANT == 1 )
+		#if defined(__GNUC__) /* ES1902-03 */
 		struct	_reent	xDummy17;
+		#endif
 	#endif
 	#if ( configUSE_TASK_NOTIFICATIONS == 1 )
 		uint32_t 		ulDummy18;

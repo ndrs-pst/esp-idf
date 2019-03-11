@@ -223,7 +223,12 @@ int adc1_get_raw(adc1_channel_t channel);
  * a misleading name and has been changed to directly call the new function.
  * Use the new function adc1_get_raw() instead
  */
-int adc1_get_voltage(adc1_channel_t channel) __attribute__((deprecated));
+int adc1_get_voltage(adc1_channel_t channel)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((deprecated))
+#endif
+;
+
 /** @endcond */
 
 /**

@@ -390,7 +390,11 @@ void xRingbufferPrintInfo(RingbufHandle_t xRingbuffer);
  * actually available for retrieval. Use xRingbufferReceiveSplit() instead for
  * thread safe method of retrieve a split item.
  */
-bool xRingbufferIsNextItemWrapped(RingbufHandle_t xRingbuffer) __attribute__((deprecated));
+bool xRingbufferIsNextItemWrapped(RingbufHandle_t xRingbuffer)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((deprecated))
+#endif
+;
 
 /*
  * Deprecated as queue sets are not meant to be used for writing to buffers. Adding
@@ -398,13 +402,21 @@ bool xRingbufferIsNextItemWrapped(RingbufHandle_t xRingbuffer) __attribute__((de
  * as every read of a semaphore must be preceded by a call to xQueueSelectFromSet().
  * QueueSetWrite no longer supported.
  */
-BaseType_t xRingbufferAddToQueueSetWrite(RingbufHandle_t xRingbuffer, QueueSetHandle_t xQueueSet) __attribute__((deprecated));
+BaseType_t xRingbufferAddToQueueSetWrite(RingbufHandle_t xRingbuffer, QueueSetHandle_t xQueueSet)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((deprecated))
+#endif
+;
 
 /*
  * Deprecated as queue sets are not meant to be used for writing to buffers.
  * QueueSetWrite no longer supported.
  */
-BaseType_t xRingbufferRemoveFromQueueSetWrite(RingbufHandle_t xRingbuffer, QueueSetHandle_t xQueueSet) __attribute__((deprecated));
+BaseType_t xRingbufferRemoveFromQueueSetWrite(RingbufHandle_t xRingbuffer, QueueSetHandle_t xQueueSet)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((deprecated))
+#endif
+;
 /** @endcond */
 
 #ifdef __cplusplus

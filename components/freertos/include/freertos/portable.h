@@ -205,11 +205,16 @@ BaseType_t xPortInterruptedFromISRContext();
 /* Multi-core: get current core ID */
 static inline uint32_t IRAM_ATTR xPortGetCoreID() {
     int id;
+    #if defined(__GNUC__) /* ES1902-03 */
     __asm__ __volatile__ (
         "rsr.prid %0\n"
         " extui %0,%0,13,1"
         :"=r"(id));
-    return id;
+    #else
+    id = 0U;
+    #endif
+
+    return (id);
 }
 
 /* Get tick rate per second */

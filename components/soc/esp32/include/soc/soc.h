@@ -224,10 +224,14 @@
         })
 
 //write value to register
+#if defined(__GNUC__) /* ES1902-03 */
 #define WRITE_PERI_REG(addr, val) ({                                                                                   \
             ASSERT_IF_DPORT_REG((addr), WRITE_PERI_REG);                                                               \
             (*((volatile uint32_t *)ETS_UNCACHED_ADDR(addr))) = (uint32_t)(val);                                       \
         })
+#else
+#define WRITE_PERI_REG(addr, val)   (*((volatile uint32_t *)ETS_UNCACHED_ADDR(addr))) = (uint32_t)(val)
+#endif
 
 //clear bits of register controlled by mask
 #define CLEAR_PERI_REG_MASK(reg, mask) ({                                                                              \

@@ -235,7 +235,11 @@ esp_err_t touch_pad_set_filter_read_cb(filter_cb_t read_cb);
  *     - ESP_ERR_INVALID_ARG GPIO error
  *     - ESP_ERR_NO_MEM No memory
  */
-esp_err_t touch_pad_isr_handler_register(void(*fn)(void *), void *arg, int unused, intr_handle_t *handle_unused) __attribute__ ((deprecated));
+esp_err_t touch_pad_isr_handler_register(void(*fn)(void *), void *arg, int unused, intr_handle_t *handle_unused)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 
 /**
  * @brief   Register touch-pad ISR.

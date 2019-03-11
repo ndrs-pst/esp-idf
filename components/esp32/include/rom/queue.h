@@ -33,7 +33,9 @@
 #ifndef _SYS_QUEUE_H_
 #define _SYS_QUEUE_H_
 
+#if defined(__GNUC__) /* ES1902-03 */
 #include <sys/cdefs.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

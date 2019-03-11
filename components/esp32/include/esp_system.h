@@ -59,7 +59,11 @@ typedef enum {
   * @attention  Applications don't need to call this function anymore. It does nothing and will
   *             be removed in future version.
   */
-void system_init(void) __attribute__ ((deprecated));
+void system_init(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 
 /**
   * @brief  Reset to default settings.
@@ -67,7 +71,11 @@ void system_init(void) __attribute__ ((deprecated));
   * Function has been deprecated, please use esp_wifi_restore instead.
   * This name will be removed in a future release.
   */
-void system_restore(void) __attribute__ ((deprecated));
+void system_restore(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 /** @endcond */
 
 /**
@@ -91,7 +99,11 @@ esp_err_t esp_register_shutdown_handler(shutdown_handler_t handle);
   * Peripherals (except for WiFi, BT, UART0, SPI1, and legacy timers) are not reset.
   * This function does not return.
   */
-void esp_restart(void) __attribute__ ((noreturn));
+void esp_restart(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((noreturn))
+#endif
+;
 
 /** @cond */
 /**
@@ -100,7 +112,11 @@ void esp_restart(void) __attribute__ ((noreturn));
   * Function has been renamed to esp_restart.
   * This name will be removed in a future release.
   */
-void system_restart(void) __attribute__ ((deprecated, noreturn));
+void system_restart(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated, noreturn))
+#endif
+;
 /** @endcond */
 
 /**
@@ -116,7 +132,11 @@ esp_reset_reason_t esp_reset_reason(void);
   * This function is deprecated. Use 'gettimeofday' function for 64-bit precision.
   * This definition will be removed in a future release.
   */
-uint32_t system_get_time(void)  __attribute__ ((deprecated));
+uint32_t system_get_time(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 /** @endcond */
 
 /**
@@ -138,7 +158,11 @@ uint32_t esp_get_free_heap_size(void);
   *
   * @return Available heap size, in bytes.
   */
-uint32_t system_get_free_heap_size(void)  __attribute__ ((deprecated));
+uint32_t system_get_free_heap_size(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 /** @endcond */
 
 /**
@@ -237,7 +261,11 @@ esp_err_t esp_efuse_mac_get_default(uint8_t *mac);
   *
   * @return ESP_OK on success
   */
-esp_err_t esp_efuse_read_mac(uint8_t *mac) __attribute__ ((deprecated));
+esp_err_t esp_efuse_read_mac(uint8_t *mac)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 
 /**
   * @brief  Read hardware MAC address.
@@ -248,7 +276,11 @@ esp_err_t esp_efuse_read_mac(uint8_t *mac) __attribute__ ((deprecated));
   * @param  mac  hardware MAC address, length: 6 bytes.
   * @return ESP_OK on success
   */
-esp_err_t system_efuse_read_mac(uint8_t *mac) __attribute__ ((deprecated));
+esp_err_t system_efuse_read_mac(uint8_t *mac)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 /** @endcond */
 
 /**
@@ -289,7 +321,11 @@ esp_err_t esp_derive_local_mac(uint8_t* local_mac, const uint8_t* universal_mac)
  *
  * @return constant string "master"
  */
-const char* system_get_sdk_version(void)  __attribute__ ((deprecated));
+const char* system_get_sdk_version(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 /** @endcond */
 
 /**
