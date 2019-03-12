@@ -107,6 +107,7 @@ typedef struct {
  */
 bool spicommon_periph_claim(spi_host_device_t host, const char* source);
 
+#if defined(__GNUC__) /* ES1902-03 */
 // The macro is to keep the back-compatibility of IDF v3.2 and before
 // In this way we can call spicommon_periph_claim with two arguments, or the host with the source set to the calling function name
 // When two arguments (host, func) are given, __spicommon_periph_claim2 is called
@@ -118,6 +119,7 @@ bool spicommon_periph_claim(spi_host_device_t host, const char* source);
     spicommon_periph_claim(host, __FUNCTION__); })
 
 #define __spicommon_periph_claim2(host, func) spicommon_periph_claim(host, func)
+#endif
 
 /**
  * @brief Check whether the spi periph is in use.

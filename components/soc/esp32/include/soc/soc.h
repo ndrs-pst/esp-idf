@@ -151,6 +151,7 @@
 #define ASSERT_IF_DPORT_REG(_r, OP)
 #endif
 
+#if defined(__GNUC__) /* ES1902-03 */
 //write value to register
 #define REG_WRITE(_r, _v) ({                                                                                           \
             ASSERT_IF_DPORT_REG((_r), REG_WRITE);                                                                      \
@@ -162,6 +163,10 @@
             ASSERT_IF_DPORT_REG((_r), REG_READ);                                                                       \
             (*(volatile uint32_t *)(_r));                                                                              \
         })
+#else
+#define REG_WRITE(_r, _v)       (*(volatile uint32_t *)(_r)) = (_v)
+#define REG_READ(_r)            (*(volatile uint32_t *)(_r))
+#endif
 
 //get bit or get bits from register
 #define REG_GET_BIT(_r, _b)  ({                                                                                        \
@@ -193,11 +198,15 @@
             ((REG_READ(_r) >> (_f##_S)) & (_f##_V));                                                                   \
         })
 
+#if defined(__GNUC__) /* ES1902-03 */
 //set field of a register from variable, uses field _S & _V to determine mask
 #define REG_SET_FIELD(_r, _f, _v) ({                                                                                   \
             ASSERT_IF_DPORT_REG((_r), REG_SET_FIELD);                                                                  \
             (REG_WRITE((_r),((REG_READ(_r) & ~((_f##_V) << (_f##_S)))|(((_v) & (_f##_V))<<(_f##_S)))));                \
         })
+#else
+#define REG_SET_FIELD(_r, _f, _v)   (REG_WRITE((_r),((REG_READ(_r) & ~((_f##_V) << (_f##_S)))|(((_v) & (_f##_V))<<(_f##_S)))))
+#endif
 
 //get field value from a variable, used when _f is not left shifted by _f##_S
 #define VALUE_GET_FIELD(_r, _f) (((_r) >> (_f##_S)) & (_f))
@@ -217,6 +226,7 @@
 //generate a value from a field value, used when _f is left shifted by _f##_S
 #define FIELD_TO_VALUE2(_f, _v) (((_v)<<_f##_S) & (_f))
 
+#if defined(__GNUC__) /* ES1902-03 */
 //read value from register
 #define READ_PERI_REG(addr) ({                                                                                         \
             ASSERT_IF_DPORT_REG((addr), READ_PERI_REG);                                                                \
@@ -224,15 +234,16 @@
         })
 
 //write value to register
-#if defined(__GNUC__) /* ES1902-03 */
 #define WRITE_PERI_REG(addr, val) ({                                                                                   \
             ASSERT_IF_DPORT_REG((addr), WRITE_PERI_REG);                                                               \
             (*((volatile uint32_t *)ETS_UNCACHED_ADDR(addr))) = (uint32_t)(val);                                       \
         })
 #else
 #define WRITE_PERI_REG(addr, val)   (*((volatile uint32_t *)ETS_UNCACHED_ADDR(addr))) = (uint32_t)(val)
+#define READ_PERI_REG(addr)         (*((volatile uint32_t *)ETS_UNCACHED_ADDR(addr)))
 #endif
 
+#if defined(__GNUC__) /* ES1902-03 */
 //clear bits of register controlled by mask
 #define CLEAR_PERI_REG_MASK(reg, mask) ({                                                                              \
             ASSERT_IF_DPORT_REG((reg), CLEAR_PERI_REG_MASK);                                                           \
@@ -244,6 +255,13 @@
             ASSERT_IF_DPORT_REG((reg), SET_PERI_REG_MASK);                                                             \
             WRITE_PERI_REG((reg), (READ_PERI_REG(reg)|(mask)));                                                        \
         })
+#else
+//clear bits of register controlled by mask
+#define CLEAR_PERI_REG_MASK(reg, mask)      WRITE_PERI_REG((reg), (READ_PERI_REG(reg)&(~(mask))))
+
+//set bits of register controlled by mask
+#define SET_PERI_REG_MASK(reg, mask)        WRITE_PERI_REG((reg), (READ_PERI_REG(reg)|(mask)))
+#endif
 
 //get bits of register controlled by mask
 #define GET_PERI_REG_MASK(reg, mask) ({                                                                                \

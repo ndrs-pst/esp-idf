@@ -67,7 +67,7 @@ typedef int sys_prot_t;
 #define PACK_STRUCT_END
 #define PACK_STRUCT_STRUCT __attribute__((packed))
 #else
-#define PACK_STRUCT_BEGIN   __declspec(align(1))
+#define PACK_STRUCT_BEGIN   __declspec(align(4))
 #define PACK_STRUCT_END
 #define PACK_STRUCT_STRUCT
 #endif

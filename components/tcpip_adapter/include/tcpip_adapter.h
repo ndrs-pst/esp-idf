@@ -22,7 +22,11 @@
 
 #if CONFIG_TCPIP_LWIP
 #include "lwip/ip_addr.h"
+#if defined(__GNUC__) /* ES1902-03 */
 #include "dhcpserver/dhcpserver.h"
+#else
+#include "apps/dhcpserver/dhcpserver.h"
+#endif
 
 typedef dhcps_lease_t tcpip_adapter_dhcps_lease_t;
 

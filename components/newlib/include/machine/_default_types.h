@@ -8,7 +8,11 @@
 #ifndef _MACHINE__DEFAULT_TYPES_H
 #define _MACHINE__DEFAULT_TYPES_H
 
+#if defined(__GNUC__) /* ES1902-03 */
 #include <sys/features.h>
+#else
+#include <newlib/include/sys/features.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

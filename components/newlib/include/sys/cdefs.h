@@ -40,8 +40,14 @@
 #ifndef	_SYS_CDEFS_H_
 #define	_SYS_CDEFS_H_
 
+#if defined(__GNUC__) /* ES1902-03 */
 #include <machine/_default_types.h>
 #include <sys/features.h>
+#else
+#include <newlib/include/machine/_default_types.h>
+#include <newlib/include/sys/features.h>
+#endif
+
 #include <stddef.h>
 
 #define __PMT(args)	args
