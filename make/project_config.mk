@@ -94,6 +94,7 @@ ifdef BATCH_BUILD  # can't prompt for new config values like on terminal
 endif
 	$(call RunConf,conf-idf --silentoldconfig)
 	touch $(SDKCONFIG_MAKEFILE) $(BUILD_DIR_BASE)/include/sdkconfig.h  # ensure newer than sdkconfig
+	cp $(BUILD_DIR_BASE)/include/sdkconfig.h $(PROJECT_PATH)/02.cfg/sdkconfig.h # ES1902-03
 
 else  # "$(MAKE_RESTARTS)" != ""
 # on subsequent make passes, skip config generation entirely

@@ -826,7 +826,11 @@ esp_err_t esp_wifi_set_storage(wifi_storage_t storage);
   *    - ESP_ERR_WIFI_MODE: WiFi internal error, the station/soft-AP control block is invalid
   *    - others: refer to error code in esp_err.h
   */
-esp_err_t esp_wifi_set_auto_connect(bool en) __attribute__ ((deprecated));
+esp_err_t esp_wifi_set_auto_connect(bool en)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((deprecated))
+#endif
+;
 
 /**
   * @brief     Get the auto connect flag
@@ -838,7 +842,11 @@ esp_err_t esp_wifi_set_auto_connect(bool en) __attribute__ ((deprecated));
   *    - ESP_ERR_WIFI_NOT_INIT: WiFi is not initialized by esp_wifi_init
   *    - ESP_ERR_INVALID_ARG: invalid argument
   */
-esp_err_t esp_wifi_get_auto_connect(bool *en) __attribute__ ((deprecated));
+esp_err_t esp_wifi_get_auto_connect(bool* en)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((deprecated))
+#endif
+;
 
 /**
   * @brief     Set 802.11 Vendor-Specific Information Element

@@ -386,10 +386,11 @@ CFLAGS := $(strip \
 
 # List of flags to pass to C++ compiler
 # If any flags are defined in application Makefile, add them at the end.
+# ES1902-03 : std=gnu++11 -> gnu++14
 CXXFLAGS ?=
 EXTRA_CXXFLAGS ?=
 CXXFLAGS := $(strip \
-	-std=gnu++11 \
+	-std=gnu++14 \
 	-fno-rtti \
 	$(OPTIMIZATION_FLAGS) $(DEBUG_FLAGS) \
 	$(COMMON_FLAGS) \
