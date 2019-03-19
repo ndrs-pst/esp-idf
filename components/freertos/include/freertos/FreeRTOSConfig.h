@@ -173,9 +173,12 @@ __attribute__((deprecated))
 
 /* This has impact on speed of search for highest priority */
 #ifdef SMALL_TEST
-#define configMAX_PRIORITIES			( 7 )
+#define configMAX_PRIORITIES			(7)
 #else
-#define configMAX_PRIORITIES			( 25 )
+/* Each task is assigned a priority from 0 to (configMAX_PRIORITIES - 1),
+ * where configMAX_PRIORITIES is defined within FreeRTOSConfig.h.
+ */
+#define configMAX_PRIORITIES			(8)         // ES1902-03 : Then posible task priority is 0 ~ 7
 #endif
 
 #ifndef CONFIG_ESP32_APPTRACE_ENABLE
