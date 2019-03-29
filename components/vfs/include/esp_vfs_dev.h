@@ -14,7 +14,9 @@
 
 #pragma once
 
+#if defined(__GNUC__) /* ES1902-03 */
 #include "esp_vfs.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
