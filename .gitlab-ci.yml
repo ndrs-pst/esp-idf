@@ -19,7 +19,7 @@ variables:
   GET_SOURCES_ATTEMPTS: "10"
   ARTIFACT_DOWNLOAD_ATTEMPTS: "10"
 
-  # We use get_sources.sh script to fetch the submodules and/or re-fetch the repo
+  # We use get-full-sources.sh script to fetch the submodules and/or re-fetch the repo
   # if it was corrupted (if submodule update fails this can happen)
   GIT_STRATEGY: fetch
   GIT_SUBMODULE_STRATEGY: none
@@ -209,8 +209,7 @@ build_esp_idf_tests_make:
     # Check if the tests demand Make built binaries. If not, delete them
     - if [ "$UNIT_TEST_BUILD_SYSTEM" == "make" ]; then exit 0; fi
     - rm -rf builds output sdkconfig
-    - rm -rf components/idf_test/unit_test/TestCaseAll.yml
-    - rm -rf components/idf_test/unit_test/CIConfigs/*.yml
+    - rm $CI_PROJECT_DIR/components/idf_test/unit_test/TestCaseAll.yml
 
 build_esp_idf_tests_cmake:
   <<: *build_esp_idf_unit_test_template
@@ -225,8 +224,7 @@ build_esp_idf_tests_cmake:
     # Check if the tests demand CMake built binaries. If not, delete them
     - if [ "$UNIT_TEST_BUILD_SYSTEM" == "cmake" ]; then exit 0; fi
     - rm -rf builds output sdkconfig
-    - rm -rf components/idf_test/unit_test/TestCaseAll.yml
-    - rm -rf components/idf_test/unit_test/CIConfigs/*.yml
+    - rm $CI_PROJECT_DIR/components/idf_test/unit_test/TestCaseAll.yml
 
 .build_examples_make_template: &build_examples_make_template
   <<: *build_template
@@ -1294,6 +1292,12 @@ UT_001_41:
     - UT_T1_1
 
 UT_001_42:
+  <<: *unit_test_template
+  tags:
+    - ESP32_IDF
+    - UT_T1_1
+
+UT_001_43:
   <<: *unit_test_template
   tags:
     - ESP32_IDF

@@ -5,9 +5,9 @@ endif()
 # Set some global esptool.py variables
 #
 # Many of these are read when generating flash_app_args & flash_project_args
-set(ESPTOOLPY "${CMAKE_CURRENT_LIST_DIR}/esptool/esptool.py" --chip esp32)
-set(ESPSECUREPY "${CMAKE_CURRENT_LIST_DIR}/esptool/espsecure.py")
-set(ESPEFUSEPY "${CMAKE_CURRENT_LIST_DIR}/esptool/espefuse.py")
+set(ESPTOOLPY ${PYTHON} "${CMAKE_CURRENT_LIST_DIR}/esptool/esptool.py" --chip esp32)
+set(ESPSECUREPY ${PYTHON} "${CMAKE_CURRENT_LIST_DIR}/esptool/espsecure.py")
+set(ESPEFUSEPY ${PYTHON} "${CMAKE_CURRENT_LIST_DIR}/esptool/espefuse.py")
 
 set(ESPFLASHMODE ${CONFIG_ESPTOOLPY_FLASHMODE})
 set(ESPFLASHFREQ ${CONFIG_ESPTOOLPY_FLASHFREQ})
@@ -52,7 +52,9 @@ if(CONFIG_SECURE_BOOT_ENABLED AND
         ${ESPTOOLPY_ELF2IMAGE_FLASH_OPTIONS} --secure-pad)
 endif()
 
-set(ESPTOOLPY_ELF2IMAGE_OPTIONS --elf-sha256-offset 0xb0)
+if(NOT BOOTLOADER_BUILD)
+    set(ESPTOOLPY_ELF2IMAGE_OPTIONS --elf-sha256-offset 0xb0)
+endif()
 
 if(CONFIG_ESPTOOLPY_FLASHSIZE_DETECT)
     # Set ESPFLASHSIZE to 'detect' *after* elf2image options are generated,
