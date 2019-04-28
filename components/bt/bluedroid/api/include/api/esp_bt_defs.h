@@ -89,7 +89,11 @@ typedef struct {
         uint32_t    uuid32;
         uint8_t     uuid128[ESP_UUID_LEN_128];
     } uuid;									/*!< UUID */
-} __attribute__((packed)) esp_bt_uuid_t;
+}
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((packed))
+#endif
+esp_bt_uuid_t;
 
 /// Bluetooth device type
 typedef enum {
