@@ -255,6 +255,9 @@ esp_err_t sdspi_host_set_card_clk(int slot, uint32_t freq_khz)
 
 esp_err_t sdspi_host_init_slot(int slot, const sdspi_slot_config_t* slot_config)
 {
+    bool in_use_flg;
+    esp_err_t ret;
+
     ESP_LOGD(TAG, "%s: SPI%d miso=%d mosi=%d sck=%d cs=%d cd=%d wp=%d, dma_ch=%d",
             __func__, slot + 1,
             slot_config->gpio_miso, slot_config->gpio_mosi,
@@ -276,11 +279,17 @@ esp_err_t sdspi_host_init_slot(int slot, const sdspi_slot_config_t* slot_config)
     };
 
     // Initialize SPI bus
-    esp_err_t ret = spi_bus_initialize((spi_host_device_t)slot, &buscfg,
-            slot_config->dma_channel);
-    if (ret != ESP_OK) {
-        ESP_LOGD(TAG, "spi_bus_initialize failed with rc=0x%x", ret);
-        return ret;
+    // ES1902-03 : WORKAROUND BETWEEN MFRC522 and microSD
+    in_use_flg = spicommon_periph_in_use((spi_host_device_t)slot);
+    if (in_use_flg == false) {
+        ret = spi_bus_initialize((spi_host_device_t)slot, &buscfg, slot_config->dma_channel);
+        if (ret != ESP_OK) {
+            ESP_LOGD(TAG, "spi_bus_initialize failed with rc=0x%x", ret);
+            return ret;
+        }
+    }
+    else {
+        // Assume that others already claim that peripheral
     }
 
     // Attach the SD card to the SPI bus
