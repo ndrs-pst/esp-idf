@@ -192,12 +192,18 @@ typedef struct {
  * @note    The flags member is used to control the message type, and transmission
  *          type (see documentation for message flags)
  */
+#if defined(_MSC_VER)
+#pragma pack(push, 4) /* ES1902-03 */
+#endif
 typedef struct {
     uint32_t flags;                 /**< Bit field of message flags indicates frame/transmission type (see documentation) */
     uint32_t identifier;            /**< 11 or 29 bit identifier */
     uint8_t data_length_code;       /**< Data length code */
     uint8_t data[CAN_MAX_DATA_LEN]; /**< Data bytes (not relevant in RTR frame) */
 } can_message_t;
+#if defined(_MSC_VER)
+#pragma pack(pop) /* ES1902-03 */
+#endif
 
 /* ----------------------------- Public API -------------------------------- */
 
