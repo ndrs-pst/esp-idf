@@ -69,10 +69,11 @@
 #include "esp_clk_internal.h"
 #include "esp_timer.h"
 #include "esp_pm.h"
+#include "esp_flash_encrypt.h"
 #include "pm_impl.h"
 #include "trax.h"
 #include "esp_ota_ops.h"
-#include "bootloader_common.h"
+#include "bootloader_flash_config.h"
 
 #define STRINGIFY(s) STRINGIFY2(s)
 #define STRINGIFY2(s) #s
@@ -174,8 +175,6 @@ void IRAM_ATTR call_start_cpu0()
         abort();
 #endif
     }
-# else  // If psram is uninitialized, we need to improve the flash cs timing.
-    bootloader_common_set_flash_cs_timing();
 #endif
 
     ESP_EARLY_LOGI(TAG, "Pro cpu up.");
@@ -351,6 +350,11 @@ void start_cpu0_default(void)
 #if CONFIG_DISABLE_BASIC_ROM_CONSOLE
     esp_efuse_disable_basic_rom_console();
 #endif
+#ifdef CONFIG_FLASH_ENCRYPTION_DISABLE_PLAINTEXT
+    if (esp_flash_encryption_enabled()) {
+        esp_flash_write_protect_crypt_cnt();
+    }
+#endif
     rtc_gpio_force_hold_dis_all();
     esp_vfs_dev_uart_register();
     esp_reent_init(_GLOBAL_REENT);
@@ -426,6 +430,17 @@ void start_cpu0_default(void)
 
 #if CONFIG_SW_COEXIST_ENABLE
     esp_coex_adapter_register(&g_coex_adapter_funcs);
+#endif
+
+    bootloader_flash_update_id();
+#if !CONFIG_SPIRAM_BOOT_INIT  // If psram is uninitialized, we need to improve some flash configuration.
+    esp_image_header_t fhdr;
+    const esp_partition_t *partition = esp_ota_get_running_partition();
+    spi_flash_read(partition->address, &fhdr, sizeof(esp_image_header_t));
+    bootloader_flash_clock_config(&fhdr);
+    bootloader_flash_gpio_config(&fhdr);
+    bootloader_flash_dummy_config(&fhdr);
+    bootloader_flash_cs_timing_config();
 #endif
 
     portBASE_TYPE res = xTaskCreatePinnedToCore(&main_task, "main",
