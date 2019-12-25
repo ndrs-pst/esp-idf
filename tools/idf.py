@@ -591,7 +591,7 @@ def main():
         raise FatalError("Setting the build directory to the project directory is not supported. Suggest dropping "
                          "--build-dir option, the default is a 'build' subdirectory inside the project directory.")
     if args.build_dir is None:
-        args.build_dir = os.path.join(args.project_dir, "build")
+        args.build_dir = os.path.join(args.project_dir, "01.build") # CUSTOM@NDRS
     args.build_dir = os.path.realpath(args.build_dir)
 
     completed_actions = set()

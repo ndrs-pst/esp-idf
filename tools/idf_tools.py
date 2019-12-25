@@ -1314,6 +1314,7 @@ def main(argv):
 
     global global_idf_tools_path
     global_idf_tools_path = os.environ.get('IDF_TOOLS_PATH') or os.path.expanduser(IDF_TOOLS_PATH_DEFAULT)
+    global_idf_tools_path = "/opt/toolchain/esp" # CUSTOM@NDRS
 
     # On macOS, unset __PYVENV_LAUNCHER__ variable if it is set.
     # Otherwise sys.executable keeps pointing to the system Python, even when a python binary from a virtualenv is invoked.
