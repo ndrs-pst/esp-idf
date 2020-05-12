@@ -117,6 +117,7 @@ static int esp_tcp_connect(const char *host, int hostlen, int port, int *sockfd,
             struct timeval tv;
             ms_to_timeval(cfg->timeout_ms, &tv);
             setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+            setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
         }
         if (cfg->non_block) {
             int flags = fcntl(fd, F_GETFL, 0);
@@ -481,6 +482,7 @@ esp_tls_t *esp_tls_conn_new(const char *hostname, int hostlen, int port, const e
     }
     /* esp_tls_conn_new() API establishes connection in a blocking manner thus this loop ensures that esp_tls_conn_new()
        API returns only after connection is established unless there is an error*/
+    size_t start = xTaskGetTickCount();
     while (1) {
         int ret = esp_tls_low_level_conn(hostname, hostlen, port, cfg, tls);
         if (ret == 1) {
@@ -489,6 +491,14 @@ esp_tls_t *esp_tls_conn_new(const char *hostname, int hostlen, int port, const e
             esp_tls_conn_delete(tls);
             ESP_LOGE(TAG, "Failed to open new connection");
             return NULL;
+        } else if (ret == 0 && cfg->timeout_ms >= 0) {
+            size_t timeout_ticks = pdMS_TO_TICKS(cfg->timeout_ms);
+            uint32_t expired = xTaskGetTickCount() - start;
+            if (expired >= timeout_ticks) {
+                esp_tls_conn_delete(tls);
+                ESP_LOGE(TAG, "Failed to open new connection in specified timeout");
+                return NULL;
+            }
         }
     }
     return NULL;

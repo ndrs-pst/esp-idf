@@ -404,22 +404,22 @@ static int get_time_wrapper(void *t)
 
 static void * IRAM_ATTR malloc_internal_wrapper(size_t size)
 {
-    return heap_caps_malloc(size, MALLOC_CAP_DEFAULT|MALLOC_CAP_INTERNAL);
+    return heap_caps_malloc(size, MALLOC_CAP_8BIT|MALLOC_CAP_DMA|MALLOC_CAP_INTERNAL);
 }
 
 static void * IRAM_ATTR realloc_internal_wrapper(void *ptr, size_t size)
 {
-    return heap_caps_realloc(ptr, size, MALLOC_CAP_DEFAULT|MALLOC_CAP_INTERNAL);
+    return heap_caps_realloc(ptr, size, MALLOC_CAP_8BIT|MALLOC_CAP_DMA|MALLOC_CAP_INTERNAL);
 }
 
 static void * IRAM_ATTR calloc_internal_wrapper(size_t n, size_t size)
 {
-    return heap_caps_calloc(n, size, MALLOC_CAP_DEFAULT|MALLOC_CAP_INTERNAL);
+    return heap_caps_calloc(n, size, MALLOC_CAP_8BIT|MALLOC_CAP_DMA|MALLOC_CAP_INTERNAL);
 }
 
 static void * IRAM_ATTR zalloc_internal_wrapper(size_t size)
 {
-    void *ptr = heap_caps_calloc(1, size, MALLOC_CAP_DEFAULT|MALLOC_CAP_INTERNAL);
+    void *ptr = heap_caps_calloc(1, size, MALLOC_CAP_8BIT|MALLOC_CAP_DMA|MALLOC_CAP_INTERNAL);
     if (ptr) {
         memset(ptr, 0, size);
     }
@@ -561,6 +561,8 @@ wifi_osi_funcs_t g_wifi_osi_funcs = {
     ._dport_access_stall_other_cpu_end_wrap = esp_dport_access_stall_other_cpu_end_wrap,
     ._phy_rf_deinit = esp_phy_rf_deinit,
     ._phy_load_cal_and_init = esp_phy_load_cal_and_init,
+    ._phy_common_clock_enable = esp_phy_common_clock_enable,
+    ._phy_common_clock_disable = esp_phy_common_clock_disable,
     ._read_mac = esp_read_mac,
     ._timer_arm = timer_arm_wrapper,
     ._timer_disarm = timer_disarm_wrapper,
@@ -586,6 +588,7 @@ wifi_osi_funcs_t g_wifi_osi_funcs = {
     ._get_time = get_time_wrapper,
     ._random = os_random,
     ._log_write = esp_log_write,
+    ._log_writev = esp_log_writev,
     ._log_timestamp = esp_log_timestamp,
     ._malloc_internal =  malloc_internal_wrapper,
     ._realloc_internal = realloc_internal_wrapper,

@@ -37,14 +37,15 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "esp_pm.h"
-#include "esp_ipc.h"
 #include "driver/periph_ctrl.h"
 #include "soc/rtc.h"
 #include "soc/rtc_cntl_reg.h"
 #include "soc/soc_memory_layout.h"
 #include "esp_clk.h"
 #include "esp_coexist_internal.h"
-
+#if !CONFIG_FREERTOS_UNICORE
+#include "esp_ipc.h"
+#endif
 
 #if CONFIG_BT_ENABLED
 
@@ -742,18 +743,21 @@ static int IRAM_ATTR cause_sw_intr_to_core_wrapper(int core_id, int intr_no)
 {
     esp_err_t err = ESP_OK;
 
+#if CONFIG_FREERTOS_UNICORE
+    cause_sw_intr((void *)intr_no);
+#else /* CONFIG_FREERTOS_UNICORE */
     if (xPortGetCoreID() == core_id) {
         cause_sw_intr((void *)intr_no);
     } else {
         err = esp_ipc_call(core_id, cause_sw_intr, (void *)intr_no);
     }
-
+#endif /* !CONFIG_FREERTOS_UNICORE */
     return err;
 }
 
 static void *malloc_internal_wrapper(size_t size)
 {
-    return heap_caps_malloc(size, MALLOC_CAP_DEFAULT|MALLOC_CAP_INTERNAL);
+    return heap_caps_malloc(size, MALLOC_CAP_8BIT|MALLOC_CAP_DMA|MALLOC_CAP_INTERNAL);
 }
 
 static int32_t IRAM_ATTR read_mac_wrapper(uint8_t mac[6])

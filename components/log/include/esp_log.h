@@ -112,6 +112,15 @@ __attribute__ ((format (printf, 3, 4)))
 
 /** @cond */
 
+/**
+ * @brief Write message into the log, va_list variant
+ * @see esp_log_write()
+ *
+ * This function is provided to ease integration toward other logging framework,
+ * so that esp_log can be used as a log sink.
+ */
+void esp_log_writev(esp_log_level_t level, const char* tag, const char* format, va_list args);
+
 #include "esp_log_internal.h"
 
 #ifndef LOG_LOCAL_LEVEL
