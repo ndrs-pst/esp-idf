@@ -597,9 +597,12 @@ push_to_github:
   tags:
     - deploy
   only:
-    - master
-    - /^release\/v/
-    - /^v\d+\.\d+(\.\d+)?($|-)/
+    refs:
+      - master
+      - /^release\/v/
+      - /^v\d+\.\d+(\.\d+)?($|-)/
+    variables:
+      - $BOT_TRIGGER_WITH_LABEL == null
   when: on_success
   dependencies: []
   before_script: *do_nothing_before
@@ -695,6 +698,18 @@ check_permissions:
   <<: *check_job_template
   script:
     - tools/ci/check-executable.sh
+
+check_version:
+  <<: *check_job_template
+  # Don't run this for feature/bugfix branches, so that it is possible to modify
+  # esp_idf_version.h in a branch before tagging the next version.
+  only:
+    - master
+    - /^release\/v/
+    - /^v\d+\.\d+(\.\d+)?($|-)/
+  script:
+    - export IDF_PATH=$PWD
+    - tools/ci/check_idf_version.sh
 
 check_examples_cmake_make:
   <<: *check_job_template
@@ -920,7 +935,6 @@ assign_test:
     # clone local test env configs
     - git clone $TEST_ENV_CONFIG_REPOSITORY
     - python $CHECKOUT_REF_SCRIPT ci-test-runner-configs ci-test-runner-configs
-    - cd ci-test-runner-configs
     # clone test bench
     - git clone $TEST_SCRIPT_REPOSITORY
     - python $CHECKOUT_REF_SCRIPT auto_test_script auto_test_script
@@ -946,7 +960,6 @@ nvs_compatible_test:
     # clone local test env configs
     - git clone $TEST_ENV_CONFIG_REPOSITORY
     - python $CHECKOUT_REF_SCRIPT ci-test-runner-configs ci-test-runner-configs
-    - cd ci-test-runner-configs
     # clone test bench
     - git clone $TEST_SCRIPT_REPOSITORY
     - python $CHECKOUT_REF_SCRIPT auto_test_script auto_test_script
@@ -1322,14 +1335,13 @@ IT_004:
 
 IT_005:
   <<: *test_template
-  parallel: 2
   tags:
     - ESP32_IDF
     - SSC_T1_5
 
 IT_006:
   <<: *test_template
-  parallel: 8
+  parallel: 7
   tags:
     - ESP32_IDF
     - SSC_T1_6
@@ -1352,13 +1364,6 @@ IT_009:
   tags:
     - ESP32_IDF
     - SSC_T1_3
-
-IT_010:
-  <<: *test_template
-  parallel: 4
-  tags:
-    - ESP32_IDF
-    - SSC_T5_1
 
 IT_011:
   <<: *test_template
@@ -1399,6 +1404,7 @@ IT_015:
 
 IT_016:
   <<: *test_template
+  allow_failure: true
   tags:
     - ESP32_IDF
     - SSC_T50_MESH1
@@ -1411,7 +1417,6 @@ IT_017:
 
 IT_018:
   <<: *test_template
-  parallel: 2
   tags:
     - ESP32_IDF
     - SSC_T1_9

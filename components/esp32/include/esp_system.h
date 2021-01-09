@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include "esp_err.h"
 #include "esp_sleep.h"
+#include "esp_idf_version.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -327,14 +328,6 @@ __attribute__ ((deprecated))
 #endif
 ;
 /** @endcond */
-
-/**
- * Get IDF version
- *
- * @return constant string from IDF_VER
- */
-const char* esp_get_idf_version(void);
-
 
 /**
  * @brief Chip models

@@ -21,9 +21,11 @@
 #include "services/gap/ble_svc_gap.h"
 #include "services/gatt/ble_svc_gatt.h"
 
+#include <tinycrypt/aes.h>
+#include <tinycrypt/constants.h>
+
 #include "mesh_hci.h"
 #include "mesh_common.h"
-#include "mesh_aes_encrypt.h"
 #include "provisioner_prov.h"
 
 /** @def BT_UUID_MESH_PROV
@@ -63,12 +65,7 @@ struct bt_mesh_dev bt_mesh_dev;
 
 /* P-256 Variables */
 static u8_t bt_mesh_public_key[64];
-static u8_t bt_mesh_private_key[32] = {
-    0x3f, 0x49, 0xf6, 0xd4, 0xa3, 0xc5, 0x5f, 0x38,
-    0x74, 0xc9, 0xb3, 0xe3, 0xd2, 0x10, 0x3f, 0x50,
-    0x4a, 0xff, 0x60, 0x7b, 0xeb, 0x40, 0xb7, 0x99,
-    0x58, 0x99, 0xb8, 0xa6, 0xcd, 0x3c, 0x1a, 0xbd
-};
+static u8_t bt_mesh_private_key[32];
 
 /* Scan related functions */
 static bt_mesh_scan_cb_t *bt_mesh_scan_dev_found_cb;
@@ -643,7 +640,7 @@ static int gap_event_cb(struct ble_gap_event *event, void *arg)
             /* This is for EspBleMesh Android app. When it tries to connect with the
              * device at the first time and it fails due to some reason. And after
              * the second connection, the device needs to send GATT service change
-             * indication to the phone manually to notify it dicovering service again.
+             * indication to the phone manually to notify it discovering service again.
              */
             ble_svc_gatt_changed(prov_svc_start_handle, 0xffff);
 
@@ -846,6 +843,79 @@ again:
     return 0;
 }
 
+#if CONFIG_BLE_MESH_SUPPORT_BLE_ADV
+int bt_mesh_ble_adv_start(const struct bt_mesh_ble_adv_param *param,
+                          const struct bt_mesh_ble_adv_data *data)
+{
+    struct ble_gap_adv_params adv_params = {0};
+    ble_addr_t p_dir_bda = {0};
+    int err = 0;
+
+    if (data && param->adv_type != BLE_MESH_ADV_DIRECT_IND &&
+        param->adv_type != BLE_MESH_ADV_DIRECT_IND_LOW_DUTY) {
+        if (data->adv_data_len) {
+            err = ble_gap_adv_set_data(data->adv_data, data->adv_data_len);
+            if (err) {
+                BT_ERR("Failed to set advertising data, err %d", err);
+                return err;
+            }
+        }
+        if (data->scan_rsp_data_len && param->adv_type != BLE_MESH_ADV_NONCONN_IND) {
+            err = ble_gap_adv_rsp_set_data(data->scan_rsp_data, data->scan_rsp_data_len);
+            if (err) {
+                BT_ERR("Failed to set scan rsp data, err %d", err);
+                return err;
+            }
+        }
+    }
+
+    switch (param->adv_type) {
+    case BLE_MESH_ADV_IND:
+        adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
+        adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
+        break;
+    case BLE_MESH_ADV_DIRECT_IND:
+        adv_params.conn_mode = BLE_GAP_CONN_MODE_DIR;
+        adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
+        break;
+    case BLE_MESH_ADV_SCAN_IND:
+        adv_params.conn_mode = BLE_GAP_CONN_MODE_NON;
+        adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
+        break;
+    case BLE_MESH_ADV_NONCONN_IND:
+        adv_params.conn_mode = BLE_GAP_CONN_MODE_NON;
+        adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
+        break;
+    case BLE_MESH_ADV_DIRECT_IND_LOW_DUTY:
+        adv_params.conn_mode = BLE_GAP_CONN_MODE_DIR;
+        adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
+        break;
+    }
+    adv_params.itvl_min = param->interval;
+    adv_params.itvl_max = param->interval;
+    adv_params.channel_map = BLE_MESH_ADV_CHNL_37 | BLE_MESH_ADV_CHNL_38 | BLE_MESH_ADV_CHNL_39;
+    adv_params.filter_policy = BLE_MESH_AP_SCAN_CONN_ALL;
+    adv_params.high_duty_cycle = (param->adv_type == BLE_MESH_ADV_DIRECT_IND) ? true : false;
+
+    if (param->own_addr_type == BLE_MESH_ADDR_PUBLIC_ID ||
+        param->own_addr_type == BLE_MESH_ADDR_RANDOM_ID ||
+        param->adv_type == BLE_MESH_ADV_DIRECT_IND ||
+        param->adv_type == BLE_MESH_ADV_DIRECT_IND_LOW_DUTY) {
+        p_dir_bda.type = param->peer_addr_type;
+        memcpy(p_dir_bda.val, param->peer_addr, BLE_MESH_ADDR_LEN);
+    }
+
+    err = ble_gap_adv_start(param->own_addr_type, &p_dir_bda, BLE_HS_FOREVER, &adv_params,
+                            gap_event_cb, NULL);
+    if (err) {
+        BT_ERR("Failed to start advertising, err %d", err);
+        return err;
+    }
+
+    return 0;
+}
+#endif /* CONFIG_BLE_MESH_SUPPORT_BLE_ADV */
+
 int bt_le_adv_stop(void)
 {
 #if BLE_MESH_DEV
@@ -908,6 +978,24 @@ int bt_le_scan_stop(void)
     bt_mesh_scan_dev_found_cb = NULL;
     return 0;
 }
+
+#if CONFIG_BLE_MESH_TEST_USE_WHITE_LIST
+int bt_le_update_white_list(struct bt_mesh_white_list *wl)
+{
+    ble_addr_t addr = {0};
+
+    if (wl == NULL || wl->add_remove == false) {
+        BT_ERR("%s, Invalid parameter", __func__);
+        return -EINVAL;
+    }
+
+    addr.type = wl->addr_type;
+    memcpy(addr.val, wl->remote_bda, BLE_MESH_ADDR_LEN);
+
+    return ble_gap_wl_set(&addr, 1);
+}
+#endif
+
 #if defined(CONFIG_BLE_MESH_NODE) && CONFIG_BLE_MESH_NODE
 
 void bt_mesh_gatts_conn_cb_register(struct bt_mesh_conn_cb *cb)
@@ -1320,7 +1408,7 @@ int bt_mesh_gattc_conn_create(const bt_mesh_addr_t *addr, u16_t service_uuid)
                 (bt_mesh_gattc_info[i].service_uuid == 0x0000)) {
             memcpy(bt_mesh_gattc_info[i].addr.val, addr->val, BLE_MESH_ADDR_LEN);
             bt_mesh_gattc_info[i].addr.type = addr->type;
-            /* Service to be found after exhanging mtu size */
+            /* Service to be found after exchanging mtu size */
             bt_mesh_gattc_info[i].service_uuid = service_uuid;
             break;
         }
@@ -1667,8 +1755,17 @@ void ble_sm_alg_ecc_init(void);
 void bt_mesh_adapt_init(void)
 {
     BT_DBG("%s", __func__);
+
     /* initialization of P-256 parameters */
     ble_sm_alg_ecc_init();
+
+    /* Set "bt_mesh_dev.flags" to 0 (only the "BLE_MESH_DEV_HAS_PUB_KEY"
+     * flag is used) here, because we need to make sure each time after
+     * the private key is initialized, a corresponding public key must
+     * be generated.
+     */
+    bt_mesh_atomic_set(bt_mesh_dev.flags, 0);
+    bt_mesh_rand(bt_mesh_private_key, sizeof(bt_mesh_private_key));
 }
 
 int bt_mesh_rand(void *buf, size_t len)
@@ -1724,7 +1821,8 @@ const u8_t *bt_mesh_pub_key_get(void)
     memcpy(bt_mesh_private_key, pri_key, 32);
 
     bt_mesh_atomic_set_bit(bt_mesh_dev.flags, BLE_MESH_DEV_HAS_PUB_KEY);
-    BT_DBG("gen the bt_mesh_public_key:%s", bt_hex(bt_mesh_public_key, sizeof(bt_mesh_public_key)));
+
+    BT_DBG("Public Key %s", bt_hex(bt_mesh_public_key, sizeof(bt_mesh_public_key)));
 
     return bt_mesh_public_key;
 }

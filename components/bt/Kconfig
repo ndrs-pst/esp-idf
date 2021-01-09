@@ -89,6 +89,19 @@ menu Bluetooth
             default BTDM_CTRL_AUTO_LATENCY if BTDM_CONTROLLER_MODE_BTDM
             default n
 
+        config BTDM_CTRL_LEGACY_AUTH_VENDOR_EVT
+            bool "Legacy Authentication Vendor Specific Event Enable"
+            depends on BTDM_CONTROLLER_MODE_BR_EDR_ONLY || BTDM_CONTROLLER_MODE_BTDM
+            default y
+            help
+                To protect from BIAS attack during Legacy authentication,
+                Legacy authentication Vendor specific event should be enabled
+
+
+        config BTDM_CTRL_LEGACY_AUTH_VENDOR_EVT_EFF
+            bool
+            default BTDM_CTRL_LEGACY_AUTH_VENDOR_EVT if BTDM_CONTROLLER_MODE_BR_EDR_ONLY || BTDM_CONTROLLER_MODE_BTDM
+            default 0
 
         config BTDM_CONTROLLER_BLE_MAX_CONN_EFF
             int
@@ -1763,7 +1776,7 @@ if BLE_MESH
 
         config BLE_MESH_WAIT_FOR_PROV_MAX_DEV_NUM
             int "Maximum number of unprovisioned devices that can be added to device queue"
-            default 20
+            default 10
             range 1 100
             help
                 This option specifies how many unprovisioned devices can be added to device
@@ -1771,20 +1784,9 @@ if BLE_MESH
                 queue in the bottom layer which is used to store unprovisioned device
                 information (e.g. Device UUID, address).
 
-        config BLE_MESH_MAX_STORED_NODES
-            int "Maximum number of nodes whose information can be stored"
-            default 20
-            range BLE_MESH_MAX_PROV_NODES 1000
-            help
-                This option specifies the maximum number of nodes whose information can be
-                stored by a Provisioner in its upper layer.
-                Users can change this value according to the number of nodes whose information
-                (e.g. Device UUID, unicast address, element number) are going to be stored by
-                a Provisioner. And the nodes include the provisioned ones and user-added ones.
-
         config BLE_MESH_MAX_PROV_NODES
             int "Maximum number of devices that can be provisioned by Provisioner"
-            default 20
+            default 10
             range 1 1000
             help
                 This option specifies how many devices can be provisioned by a Provisioner.
@@ -2003,6 +2005,29 @@ if BLE_MESH
                 introduce message replay attacks and system security will be in a
                 vulnerable state.
 
+        config BLE_MESH_SETTINGS_BACKWARD_COMPATIBILITY
+            bool "A specific option for settings backward compatibility"
+            depends on BLE_MESH_NODE
+            default n
+            help
+                This option is created to solve the issue of failure in recovering
+                node information after mesh stack updates. In the old version mesh
+                stack, there is no key of "mesh/role" in nvs. In the new version
+                mesh stack, key of "mesh/role" is added in nvs, recovering node
+                information needs to check "mesh/role" key in nvs and implements
+                selective recovery of mesh node information. Therefore, there may
+                be failure in recovering node information during node restarting
+                after OTA.
+
+                The new version mesh stack adds the option of "mesh/role" because
+                we have added the support of storing Provisioner information, while
+                the old version only supports storing node information.
+
+                If users are updating their nodes from old version to new version,
+                we recommend enabling this option, so that system could set the flag
+                in advance before recovering node information and make sure the node
+                information recovering could work as expected.
+
     endif  # if BLE_MESH_SETTINGS
 
     config BLE_MESH_SUBNET_COUNT
@@ -2055,6 +2080,11 @@ if BLE_MESH
             The replay protection list is used to prevent a node from replay attack,
             which will store the source address and sequence number of the received
             mesh messages.
+            For Provisioner, the replay protection list size should not be smaller than
+            the maximum number of nodes whose information can be stored. And the element
+            number of each node should also be taken into consideration. For example, if
+            Provisioner can provision up to 20 nodes and each node contains two elements,
+            then the replay protection list size of Provisioner should be at least 40.
 
     config BLE_MESH_MSG_CACHE_SIZE
         int "Network message cache size"
@@ -2078,6 +2108,24 @@ if BLE_MESH
             for the Transport Layer MIC). For example, 5 segments means the maximum
             SDU size is 60 bytes, which leaves 56 bytes for application layer data
             using a 4-byte MIC, or 52 bytes using an 8-byte MIC.
+
+    config BLE_MESH_SUPPORT_BLE_ADV
+        bool "Support sending normal BLE advertising packets"
+        default n
+        help
+            When selected, users can send normal BLE advertising packets
+            with specific API.
+
+    if BLE_MESH_SUPPORT_BLE_ADV
+
+        config BLE_MESH_BLE_ADV_BUF_COUNT
+            int "Number of advertising buffers for BLE advertising packets"
+            default 3
+            range 1 255
+            help
+                Number of advertising buffers for BLE packets available.
+
+    endif # BLE_MESH_SUPPORT_BLE_ADV
 
     config BLE_MESH_IVU_DIVIDER
         int "Divider for IV Update state refresh timer"
@@ -2501,9 +2549,9 @@ if BLE_MESH
                 Enable support for Generic Default Transition Time client model.
 
         config BLE_MESH_GENERIC_POWER_ONOFF_CLI
-            bool "Generic Power Onoff Client Model"
+            bool "Generic Power OnOff Client Model"
             help
-                Enable support for Generic Power Onoff client model.
+                Enable support for Generic Power OnOff client model.
 
         config BLE_MESH_GENERIC_POWER_LEVEL_CLI
             bool "Generic Power Level Client Model"
@@ -2588,6 +2636,26 @@ if BLE_MESH
             help
                 This option adds extra self-tests which are run every time BLE Mesh
                 networking is initialized.
+
+        if BLE_MESH_SELF_TEST
+
+            config BLE_MESH_TEST_AUTO_ENTER_NETWORK
+                bool "Unprovisioned device enters mesh network automatically"
+                default y
+                help
+                    With this option enabled, an unprovisioned device can automatically
+                    enters mesh network using a specific test function without the pro-
+                    visioning procedure. And on the Provisioner side, a test function
+                    needs to be invoked to add the node information into the mesh stack.
+
+            config BLE_MESH_TEST_USE_WHITE_LIST
+                bool "Use white list to filter mesh advertising packets"
+                default n
+                help
+                    With this option enabled, users can use white list to filter mesh
+                    advertising packets while scanning.
+
+        endif # BLE_MESH_SELF_TEST
 
         config BLE_MESH_SHELL
             bool "Enable BLE Mesh shell"

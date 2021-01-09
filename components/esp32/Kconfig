@@ -180,6 +180,9 @@ menu "ESP32-specific"
                 #Note that this is limited to 62 banks, as esp_spiram_writeback_cache needs some kind of mapping of
                 #some banks below that mark to work. We cannot at this moment guarantee this to exist when himem is
                 #enabled.
+
+                If spiram 2T mode is enabled, the size of 64Mbit psram will be changed as 32Mbit, so himem will be
+                unusable.
         config SPIRAM_BANKSWITCH_RESERVE
             int "Amount of 32K pages to reserve for bank switching"
             depends on SPIRAM_BANKSWITCH_ENABLE
@@ -348,6 +351,20 @@ menu "ESP32-specific"
                 bootloader.
 
                 For ESP32-PICO chip, the default value of this config should be 7.
+
+        config SPIRAM_2T_MODE
+            bool "Enable SPI PSRAM 2T mode"
+            depends on SPIRAM_SUPPORT
+            default "n"
+            help
+                Enable this option to fix single bit errors inside 64Mbit PSRAM.
+
+                Some 64Mbit PSRAM chips have a hardware issue in the RAM which causes bit errors at multiple
+                fixed bit positions.
+
+                Note: If this option is enabled, the 64Mbit PSRAM chip will appear to be 32Mbit in size.
+                Applications will not be affected unless the use the esp_himem APIs, which are not supported
+                in 2T mode.
 
     endmenu # "SPI RAM config"
 
@@ -910,6 +927,16 @@ menu "ESP32-specific"
             - 32768 Hz if the 32k crystal oscillator is used. For this use value 3000 or more.
               In case more value will help improve the definition of the launch of the crystal.
               If the crystal could not start, it will be switched to internal RC.
+
+    config ESP32_RTC_XTAL_CAL_RETRY
+        int "Number of attempts to repeat 32k XTAL calibration"
+        default 1
+        depends on ESP32_RTC_CLOCK_SOURCE_EXTERNAL_CRYSTAL
+        help
+            Number of attempts to repeat 32k XTAL calibration
+            before giving up and switching to the internal RC.
+            Increase this option if the 32k crystal oscillator
+            does not start and switches to internal RC.
 
     config ESP32_RTC_XTAL_BOOTSTRAP_CYCLES
         int "Bootstrap cycles for external 32kHz crystal"

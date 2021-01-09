@@ -118,6 +118,8 @@ INPUT = \
     ../../components/esp_http_client/include/esp_http_client.h \
     ../../components/esp_http_server/include/esp_http_server.h \
     ../../components/esp_https_server/include/esp_https_server.h \
+    ## Websocket Client
+    ../../components/esp_websocket_client/include/esp_websocket_client.h \
     ##
     ## Provisioning - API Reference
     ##
@@ -195,6 +197,8 @@ INPUT = \
     ## Base MAC address
     ## NOTE: for line below header_file.inc is not used
     ../../components/esp32/include/esp_system.h \
+    ## IDF version
+    ../../components/esp32/include/esp_idf_version.h \
     ##
     ## ULP Coprocessor - API Guides
     ##

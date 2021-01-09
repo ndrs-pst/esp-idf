@@ -17,6 +17,10 @@
 
 #include "esp_ble_mesh_defs.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @brief: event, event code of user-defined model events; param, parameters of user-defined model events */
 typedef void (* esp_ble_mesh_model_cb_t)(esp_ble_mesh_model_cb_event_t event,
         esp_ble_mesh_model_cb_param_t *param);
@@ -247,6 +251,48 @@ esp_ble_mesh_node_t *esp_ble_mesh_provisioner_get_node_with_uuid(const uint8_t u
 esp_ble_mesh_node_t *esp_ble_mesh_provisioner_get_node_with_addr(uint16_t unicast_addr);
 
 /**
+ * @brief        This function is called to get the provisioned node information
+ *               with the node name.
+ *
+ * @param[in]    name: Name of the node (end by '\0').
+ *
+ * @return       Pointer of the node info struct or NULL on failure.
+ *
+ */
+esp_ble_mesh_node_t *esp_ble_mesh_provisioner_get_node_with_name(const char *name);
+
+/**
+ * @brief         This function is called by Provisioner to get provisioned node count.
+ *
+ * @return        Number of the provisioned nodes.
+ *
+ */
+uint16_t esp_ble_mesh_provisioner_get_prov_node_count(void);
+
+/**
+ * @brief         This function is called by Provisioner to get the entry of the node table.
+ *
+ * @note          After invoking the function to get the entry of nodes, users can use the "for"
+ *                loop combined with the macro CONFIG_BLE_MESH_MAX_PROV_NODES to get each node's
+ *                information. Before trying to read the node's information, users need to check
+ *                if the node exists, i.e. if the *(esp_ble_mesh_node_t **node) is NULL.
+ *                For example:
+ *                ```
+ *                const esp_ble_mesh_node_t **entry = esp_ble_mesh_provisioner_get_node_table_entry();
+ *                for (int i = 0; i < CONFIG_BLE_MESH_MAX_PROV_NODES; i++) {
+ *                    const esp_ble_mesh_node_t *node = entry[i];
+ *                    if (node) {
+ *                        ......
+ *                    }
+ *                }
+ *                ```
+ *
+ * @return        Pointer to the start of the node table.
+ *
+ */
+const esp_ble_mesh_node_t **esp_ble_mesh_provisioner_get_node_table_entry(void);
+
+/**
  * @brief        This function is called to delete the provisioned node information
  *               with the node device uuid.
  *
@@ -363,14 +409,6 @@ esp_err_t esp_ble_mesh_provisioner_update_local_net_key(const uint8_t net_key[16
 const uint8_t *esp_ble_mesh_provisioner_get_local_net_key(uint16_t net_idx);
 
 /**
- * @brief         This function is called by Provisioner to get provisioned node count.
- *
- * @return        Number of the provisioned nodes.
- *
- */
-uint16_t esp_ble_mesh_provisioner_get_prov_node_count(void);
-
-/**
  * @brief         This function is called to get fast provisioning application key.
  *
  * @param[in]     net_idx: Network key index.
@@ -380,5 +418,9 @@ uint16_t esp_ble_mesh_provisioner_get_prov_node_count(void);
  *
  */
 const uint8_t *esp_ble_mesh_get_fast_prov_app_key(uint16_t net_idx, uint16_t app_idx);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _ESP_BLE_MESH_NETWORKING_API_H_ */
