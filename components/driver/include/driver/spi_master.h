@@ -347,7 +347,11 @@ void spi_device_release_bus(spi_device_handle_t dev);
  *
  * @return Actual working frequency that most fit.
  */
-int spi_cal_clock(int fapb, int hz, int duty_cycle, uint32_t* reg_o) __attribute__((deprecated));
+int spi_cal_clock(int fapb, int hz, int duty_cycle, uint32_t* reg_o)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief Calculate the working frequency that is most close to desired frequency.

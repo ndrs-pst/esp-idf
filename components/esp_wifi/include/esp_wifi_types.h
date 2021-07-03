@@ -515,7 +515,7 @@ typedef struct {
     bool no_ack;                /**< Indicates no ack required */
     wifi_action_rx_cb_t rx_cb;  /**< Rx Callback to receive any response */
     uint32_t data_len;          /**< Length of the appended Data */
-    uint8_t data[0];            /**< Appended Data payload */
+    uint8_t data[1];            /**< Appended Data payload */ /* #CUSTOM@NDRS */
 } wifi_action_tx_req_t;
 
 /**

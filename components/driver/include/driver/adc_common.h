@@ -150,7 +150,11 @@ typedef struct adc_digi_init_config_s {
  * @brief Enable ADC power
  * @deprecated Use adc_power_acquire and adc_power_release instead.
  */
-void adc_power_on(void) __attribute__((deprecated));
+void adc_power_on(void)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief Power off SAR ADC
@@ -159,7 +163,11 @@ void adc_power_on(void) __attribute__((deprecated));
  * This function is deprecated because forcing power ADC power off may
  * disrupt operation of other components which may be using the ADC.
  */
-void adc_power_off(void) __attribute__((deprecated));
+void adc_power_off(void)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief Increment the usage counter for ADC module.
@@ -451,7 +459,11 @@ esp_err_t adc_vref_to_gpio(adc_unit_t adc_unit, gpio_num_t gpio);
  *                  - ESP_OK: v_ref successfully routed to selected GPIO
  *                  - ESP_ERR_INVALID_ARG: Unsupported GPIO
  */
-esp_err_t adc2_vref_to_gpio(gpio_num_t gpio) __attribute__((deprecated));
+esp_err_t adc2_vref_to_gpio(gpio_num_t gpio)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /*---------------------------------------------------------------
                     Digital controller setting

@@ -1375,7 +1375,7 @@ esp_err_t esp_ble_gap_stop_scanning(void);
  *                  - other  : failed
  *
  */
-esp_err_t esp_ble_gap_start_advertising (esp_ble_adv_params_t *adv_params);
+esp_err_t esp_ble_gap_start_advertising(esp_ble_adv_params_t const* adv_params); /* #CUSTOM@NDRS */
 
 
 

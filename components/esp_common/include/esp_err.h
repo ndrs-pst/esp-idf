@@ -17,6 +17,41 @@
 #include <stdio.h>
 #include <assert.h>
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+static inline int __builtin_ffs(unsigned int x) {
+  if (x == 0) {
+    return (0);
+  }
+
+  int num = 1;
+  if ((x & 0xFFFF) == 0) {
+    num += 16;
+    x >>= 16;
+  }
+
+  if ((x & 0xFF) == 0) {
+    num += 8;
+    x >>= 8;
+  }
+
+  if ((x & 0x0F) == 0) {
+    num += 4;
+    x >>= 4;
+  }
+
+  if ((x & 0x03) == 0) {
+    num += 2;
+    x >>= 2;
+  }
+
+  if ((x & 0x01) == 0) {
+    num += 1;
+  }
+
+  return (num);
+}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

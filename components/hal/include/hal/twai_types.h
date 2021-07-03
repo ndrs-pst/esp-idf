@@ -100,6 +100,7 @@ typedef enum {
  * @note    The flags member is deprecated
  */
 typedef struct {
+    #if defined(__GNUC__) /* #CUSTOM@NDRS */
     union {
         struct {
             //The order of these bits must match deprecated message flags for compatibility reasons
@@ -113,6 +114,9 @@ typedef struct {
         //Todo: Deprecate flags
         uint32_t flags;                 /**< Deprecated: Alternate way to set bits using message flags */
     };
+    #else
+    uint32_t flags;                     /**< Deprecated: Alternate way to set bits using message flags */
+    #endif
     uint32_t identifier;                /**< 11 or 29 bit identifier */
     uint8_t data_length_code;           /**< Data length code */
     uint8_t data[TWAI_FRAME_MAX_DLC];    /**< Data bytes (not relevant in RTR frame) */
