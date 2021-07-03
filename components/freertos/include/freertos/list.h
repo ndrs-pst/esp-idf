@@ -92,6 +92,10 @@
 	#define configLIST_VOLATILE
 #endif /* configSUPPORT_CROSS_MODULE_OPTIMISATION */
 
+#if defined(_MSC_VER) /* ES1902-03 */
+#define __GNUC_PREREQ(maj, min) 0
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -1325,7 +1325,7 @@ esp_err_t esp_ble_gap_register_callback(esp_gap_ble_cb_t callback);
  *                  - other  : failed
  *
  */
-esp_err_t esp_ble_gap_config_adv_data (esp_ble_adv_data_t *adv_data);
+esp_err_t esp_ble_gap_config_adv_data(esp_ble_adv_data_t const* adv_data); /* ES1902-03 */
 
 
 

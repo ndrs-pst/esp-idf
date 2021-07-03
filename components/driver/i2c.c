@@ -198,7 +198,7 @@ static i2c_clk_alloc_t i2c_clk_alloc[I2C_SCLK_MAX] = {
 };
 
 static i2c_obj_t *p_i2c_obj[I2C_NUM_MAX] = {0};
-static void i2c_isr_handler_default(void *arg);
+static void i2c_isr_handler_default(void* arg);
 static void IRAM_ATTR i2c_master_cmd_begin_static(i2c_port_t i2c_num);
 static esp_err_t IRAM_ATTR i2c_hw_fsm_reset(i2c_port_t i2c_num);
 
@@ -462,7 +462,7 @@ esp_err_t i2c_reset_rx_fifo(i2c_port_t i2c_num)
     return ESP_OK;
 }
 
-static void IRAM_ATTR i2c_isr_handler_default(void *arg)
+static void IRAM_ATTR i2c_isr_handler_default(void* arg)
 {
     i2c_obj_t *p_i2c = (i2c_obj_t *) arg;
     int i2c_num = p_i2c->i2c_num;
@@ -968,7 +968,7 @@ esp_err_t i2c_master_write(i2c_cmd_handle_t cmd_handle, const uint8_t *data, siz
         cmd.hw_cmd.ack_val = 0;
         cmd.hw_cmd.op_code = I2C_LL_CMD_WRITE;
         cmd.hw_cmd.byte_num = len_tmp;
-        cmd.data = (uint8_t*) data + data_offset;
+        cmd.data = (uint8_t*)((intptr_t)data + data_offset);    /* CUSTOM@NDRS */
         ret = i2c_cmd_link_append(cmd_handle, &cmd);
         data_offset += len_tmp;
         if (ret != ESP_OK) {

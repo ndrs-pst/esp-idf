@@ -128,7 +128,10 @@ uint32_t esp_log_early_timestamp(void);
  *
  * This function or these macros should not be used from an interrupt.
  */
-void esp_log_write(esp_log_level_t level, const char* tag, const char* format, ...) __attribute__ ((format (printf, 3, 4)));
+void esp_log_write(esp_log_level_t level, const char* tag, const char* format, ...)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((format (printf, 3, 4)))
+#endif
 
 /**
  * @brief Write message into the log, va_list variant

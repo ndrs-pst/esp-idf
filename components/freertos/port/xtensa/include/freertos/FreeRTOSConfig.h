@@ -107,7 +107,11 @@
  * Update the code to use esp_clk_cpu_freq function instead.
  * @return current CPU clock frequency, in Hz
  */
-int xt_clock_freq(void) __attribute__((deprecated));
+int xt_clock_freq(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((deprecated))
+#endif
+;
 
 #define XT_CLOCK_FREQ   (xt_clock_freq())
 
@@ -177,9 +181,12 @@ int xt_clock_freq(void) __attribute__((deprecated));
 
 /* This has impact on speed of search for highest priority */
 #ifdef SMALL_TEST
-#define configMAX_PRIORITIES			( 7 )
+#define configMAX_PRIORITIES			(7)
 #else
-#define configMAX_PRIORITIES			( 25 )
+/* Each task is assigned a priority from 0 to (configMAX_PRIORITIES - 1),
+ * where configMAX_PRIORITIES is defined within FreeRTOSConfig.h.
+ */
+#define configMAX_PRIORITIES            (8)         // ES1902-03 : Then posible task priority is 0 ~ 7
 #endif
 
 /* Various things that impact minimum stack sizes */

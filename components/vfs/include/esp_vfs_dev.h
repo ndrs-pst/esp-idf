@@ -14,8 +14,10 @@
 
 #pragma once
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #include "esp_vfs.h"
 #include "esp_vfs_common.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {

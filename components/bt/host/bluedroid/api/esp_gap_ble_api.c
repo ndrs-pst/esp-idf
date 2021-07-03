@@ -31,7 +31,8 @@ esp_err_t esp_ble_gap_register_callback(esp_gap_ble_cb_t callback)
 }
 
 #if (BLE_42_FEATURE_SUPPORT == TRUE)
-esp_err_t esp_ble_gap_config_adv_data(esp_ble_adv_data_t *adv_data)
+/* ES1902-03 */
+esp_err_t esp_ble_gap_config_adv_data(esp_ble_adv_data_t const* adv_data)
 {
     btc_msg_t msg;
     btc_ble_gap_args_t arg;
@@ -103,7 +104,8 @@ esp_err_t esp_ble_gap_stop_scanning(void)
     return (btc_transfer_context(&msg, NULL, 0, NULL) == BT_STATUS_SUCCESS ? ESP_OK : ESP_FAIL);
 }
 
-esp_err_t esp_ble_gap_start_advertising(esp_ble_adv_params_t *adv_params)
+/* ES1902-03 */
+esp_err_t esp_ble_gap_start_advertising(esp_ble_adv_params_t const* adv_params)
 {
     btc_msg_t msg;
     btc_ble_gap_args_t arg;

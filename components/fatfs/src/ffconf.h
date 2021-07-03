@@ -1,3 +1,10 @@
+#if defined(__GNUC__) /* ES1902-03 */
+#include <sys/param.h>
+#else
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 #include "sdkconfig.h"
 
 /*---------------------------------------------------------------------------/

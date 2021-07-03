@@ -103,7 +103,11 @@ esp_err_t esp_unregister_shutdown_handler(shutdown_handler_t handle);
   * Peripherals (except for WiFi, BT, UART0, SPI1, and legacy timers) are not reset.
   * This function does not return.
   */
-void esp_restart(void) __attribute__ ((noreturn));
+void esp_restart(void)
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__ ((noreturn))
+#endif
+;
 
 /**
  * @brief  Get reason of last reset
@@ -263,10 +267,10 @@ void  __attribute__((noreturn)) esp_system_abort(const char* details);
  * @brief Chip models
  */
 typedef enum {
-    CHIP_ESP32  = 1, //!< ESP32
-    CHIP_ESP32S2 = 2, //!< ESP32-S2
-    CHIP_ESP32S3 = 4, //!< ESP32-S3
-    CHIP_ESP32C3 = 5, //!< ESP32-C3
+    CHIP_ESP32   = 1,           //!< ESP32
+    CHIP_ESP32S2 = 2,           //!< ESP32-S2
+    CHIP_ESP32S3 = 4,           //!< ESP32-S3
+    CHIP_ESP32C3 = 5,           //!< ESP32-C3
 } esp_chip_model_t;
 
 /* Chip feature flags, used in esp_chip_info_t */

@@ -323,7 +323,7 @@ typedef struct {
     uint8_t length;          /**< Length of all bytes in the element data following this field. Minimum 4. */
     uint8_t vendor_oui[3];   /**< Vendor identifier (OUI). */
     uint8_t vendor_oui_type; /**< Vendor-specific OUI type. */
-    uint8_t payload[0];      /**< Payload. Length is equal to value in 'length' field, minus 4. */
+    uint8_t payload[1];      /**< Payload. Length is equal to value in 'length' field, minus 4. */ /* ES1902-03 */
 } vendor_ie_data_t;
 
 /** @brief Received packet radio metadata header, this is the common header at the beginning of all promiscuous mode RX callback buffers */
@@ -380,7 +380,7 @@ typedef struct {
  */
 typedef struct {
     wifi_pkt_rx_ctrl_t rx_ctrl; /**< metadata header */
-    uint8_t payload[0];       /**< Data or management payload. Length of payload is described by rx_ctrl.sig_len. Type of content determined by packet type argument of callback. */
+    uint8_t payload[1];         /**< Data or management payload. Length of payload is described by rx_ctrl.sig_len. Type of content determined by packet type argument of callback. */ /* ES1902-03 */
 } wifi_promiscuous_pkt_t;
 
 /**
