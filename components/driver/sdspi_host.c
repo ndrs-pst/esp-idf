@@ -964,7 +964,7 @@ esp_err_t sdspi_host_init_slot(int slot, const sdspi_slot_config_t* slot_config)
     bool in_use_flg;
     esp_err_t ret;
     
-    esp_err_t ret = ESP_OK;
+    ret = ESP_OK;
     if (get_slot_info(slot) != NULL) {
         ESP_LOGE(TAG, "Bus already initialized. Call `sdspi_host_init_dev` to attach an sdspi device to an initialized bus.");
         return ESP_ERR_INVALID_STATE;

@@ -141,11 +141,15 @@
             (*(volatile uint32_t*)(_r) = (*(volatile uint32_t*)(_r) & ~(_m)) | ((_b) & (_m)));                         \
         })
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 //get field from register, uses field _S & _V to determine mask
 #define REG_GET_FIELD(_r, _f) ({                                                                                       \
             ASSERT_IF_DPORT_REG((_r), REG_GET_FIELD);                                                                  \
             ((REG_READ(_r) >> (_f##_S)) & (_f##_V));                                                                   \
         })
+#else
+#define REG_GET_FIELD(_r, _f)       ((REG_READ(_r) >> (_f##_S)) & (_f##_V))
+#endif
 
 #if defined(__GNUC__) /* #CUSTOM@NDRS */
 //set field of a register from variable, uses field _S & _V to determine mask

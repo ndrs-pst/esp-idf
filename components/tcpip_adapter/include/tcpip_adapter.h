@@ -31,7 +31,11 @@ extern "C" {
  * @brief tcpip adapter legacy init. It is used only to set the compatibility mode of esp-netif, which
  * will enable backward compatibility of esp-netif.
  */
-void tcpip_adapter_init(void)  __attribute__ ((deprecated));
+void tcpip_adapter_init(void)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__ ((deprecated))
+#endif
+;
 
 /**
  * @brief Compatiblity mode: convert the esp-netif handle to tcpip_adapter legacy interface enum

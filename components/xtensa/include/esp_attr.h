@@ -111,7 +111,6 @@
 
 // Forces to not inline function
 #define NOINLINE_ATTR __attribute__((noinline))
-#else
 
 // This allows using enum as flags in C++
 // Format: FLAG_ATTR(flag_enum_t)
@@ -137,6 +136,7 @@ FORCE_INLINE_ATTR TYPE& operator<<=(TYPE& a, int b) { a <<= b; return a; }
 #else
 #define FLAG_ATTR(TYPE)
 #endif
+#else
 #define RTC_IRAM_ATTR
 #define EXT_RAM_ATTR
 #define RTC_DATA_ATTR
