@@ -34,12 +34,16 @@
 
 #include <stdlib.h>
 #include <time.h>
+
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/select.h>
+#endif
+
 #include "esp_task.h"
 #include "esp_system.h"
 #include "sdkconfig.h"

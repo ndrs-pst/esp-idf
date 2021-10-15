@@ -98,6 +98,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
 endif()
 
 list(APPEND link_options "-fno-lto")
+list(APPEND compile_options "-fdiagnostics-color=always")
 
 idf_build_set_property(COMPILE_OPTIONS "${compile_options}" APPEND)
 idf_build_set_property(C_COMPILE_OPTIONS "${c_compile_options}" APPEND)
