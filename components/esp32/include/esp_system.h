@@ -150,6 +150,16 @@ __attribute__ ((deprecated))
   */
 uint32_t esp_get_free_heap_size(void);
 
+/**
+ * @brief  Get the size of available internal heap.
+ *
+ * Note that the returned value may be larger than the maximum contiguous block
+ * which can be allocated.
+ *
+ * @return Available internal heap size, in bytes.
+ */
+uint32_t esp_get_free_internal_heap_size(void);
+
 /** @cond */
 /**
   * @brief  Get the size of available heap.
@@ -357,6 +367,15 @@ typedef struct {
  * @param[out] out_info structure to be filled
  */
 void esp_chip_info(esp_chip_info_t* out_info);
+
+/**
+ * @brief Cache lock bug exists or not
+ *
+ * @return
+ *          - true : bug exists
+ *          - false : bug not exists
+ */
+bool soc_has_cache_lock_bug(void);
 
 #ifdef __cplusplus
 }
