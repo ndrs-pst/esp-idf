@@ -98,10 +98,16 @@ else()
         set(priv_requires bootloader_support app_update soc esp_ipc)
     endif()
 
+    set(include_dirs include)
+    if($ENV{MY_TARGET} STREQUAL TARGET_EMU_H17WF)
+        list(APPEND include_dirs $ENV{MY_PRJ_DIR}/main/01.inc/
+    )
+    endif()
+
     idf_component_register(SRCS "${srcs}"
                         REQUIRES hal
                         PRIV_REQUIRES "${priv_requires}"
-                        INCLUDE_DIRS include
+                        INCLUDE_DIRS ${include_dirs}
                         PRIV_INCLUDE_DIRS private_include
                         LDFRAGMENTS linker.lf)
 
