@@ -24,7 +24,7 @@
 #include "esp_flash_internal.h"
 #include "spi_flash_defs.h"
 
-#if (TARGET_EMU_H17WF == 1U)
+#if ((TARGET_EMU_H17WF == 1U) || (TARGET_LCU_I18WF == 1U))
 #include "mqtt/ex_wdt.h"                    /* #CUSTOM@NDRS */
 #endif
 
@@ -456,7 +456,7 @@ esp_err_t IRAM_ATTR esp_flash_erase_region(esp_flash_t *chip, uint32_t start, ui
             }
         }
 
-        #if (TARGET_EMU_H17WF == 1U)
+        #if ((TARGET_EMU_H17WF == 1U) || (TARGET_LCU_I18WF == 1U))
         hw_wdt_clr();                       /* #CUSTOM@NDRS */
         #endif
 
