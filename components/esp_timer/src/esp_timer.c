@@ -202,7 +202,7 @@ esp_err_t esp_timer_delete(esp_timer_handle_t timer)
     return ESP_OK;
 }
 
-static IRAM_ATTR esp_err_t timer_insert(esp_timer_handle_t timer)
+static IRAM_ATTR esp_err_t /**/timer_insert(esp_timer_handle_t timer)
 {
 #if WITH_PROFILING
     timer_remove_inactive(timer);
@@ -364,7 +364,7 @@ static IRAM_ATTR inline bool is_initialized(void)
     return s_timer_task != NULL;
 }
 
-esp_err_t esp_timer_init(void)
+esp_err_t /**/esp_timer_init(void)
 {
     esp_err_t err;
     if (is_initialized()) {

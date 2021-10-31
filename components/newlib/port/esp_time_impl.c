@@ -133,7 +133,7 @@ uint32_t esp_clk_slowclk_cal_get(void)
     return REG_READ(RTC_SLOW_CLK_CAL_REG);
 }
 
-uint64_t esp_rtc_get_time_us(void)
+uint64_t /**/esp_rtc_get_time_us(void)
 {
     _lock_acquire(&s_esp_rtc_time_lock);
     const uint32_t cal = esp_clk_slowclk_cal_get();
