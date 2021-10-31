@@ -118,7 +118,7 @@ static void adjtime_corr_stop (void)
 }
 #endif
 
-int adjtime(const struct timeval *delta, struct timeval *outdelta)
+int /**/adjtime(const struct timeval *delta, struct timeval *outdelta)
 {
 #if IMPL_NEWLIB_TIME_FUNCS
     if(outdelta != NULL){
@@ -169,14 +169,14 @@ clock_t IRAM_ATTR _times_r(struct _reent *r, struct tms *ptms)
     return (clock_t) tv.tv_sec;
 }
 
-int IRAM_ATTR _gettimeofday_r(struct _reent *r, struct timeval *tv, void *tz)
+int IRAM_ATTR /**/_gettimeofday_r(struct _reent *r, struct timeval *tv, void *tz)
 {
     (void) tz;
 
 #if IMPL_NEWLIB_TIME_FUNCS
     if (tv) {
         uint64_t microseconds = get_adjusted_boot_time() + esp_time_impl_get_time_since_boot();
-        tv->tv_sec = microseconds / 1000000;
+        tv->tv_sec  = microseconds / 1000000;
         tv->tv_usec = microseconds % 1000000;
     }
     return 0;
@@ -186,7 +186,7 @@ int IRAM_ATTR _gettimeofday_r(struct _reent *r, struct timeval *tv, void *tz)
 #endif
 }
 
-int settimeofday(const struct timeval *tv, const struct timezone *tz)
+int /**/settimeofday(const struct timeval *tv, const struct timezone *tz)
 {
     (void) tz;
 #if IMPL_NEWLIB_TIME_FUNCS
