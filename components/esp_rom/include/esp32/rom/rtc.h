@@ -194,7 +194,11 @@ void set_rtc_memory_crc(void);
   *
   * @return None
   */
-void __attribute__((noreturn)) software_reset(void);
+void
+#if defined(__GNUC__) /* ES1902-03 */
+__attribute__((noreturn))
+#endif
+software_reset(void);
 
 /**
   * @brief Software Reset digital core.
