@@ -91,6 +91,14 @@ esp_err_t i2c_driver_delete(i2c_port_t i2c_num);
 esp_err_t i2c_param_config(i2c_port_t i2c_num, const i2c_config_t *i2c_conf);
 
 /**
+ * @brief Set I2C clock frequency for master mode
+ * @param i2c_num I2C port number
+ * @param hz Transfer frequency (Hz)
+ * @return None
+ */
+void i2c_bus_frequency(i2c_port_t i2c_num, int hz);             /* #CUSTOM@NDRS */
+
+/**
  * @brief reset I2C tx hardware fifo
  *
  * @param i2c_num I2C port number
@@ -179,6 +187,13 @@ i2c_cmd_handle_t i2c_cmd_link_create(void);
  * @param cmd_handle I2C command handle
  */
 void i2c_cmd_link_delete(i2c_cmd_handle_t cmd_handle);
+
+/**
+ * @brief Free I2C command link (except cmd_handle) itself
+ *
+ * @param cmd_handle I2C command handle
+ */
+void i2c_cmd_link_free(i2c_cmd_handle_t cmd_handle);            /* #CUSTOM@NDRS */
 
 /**
  * @brief Queue command for I2C master to generate a start signal

@@ -40,7 +40,11 @@
 #define STRUCT_BEGIN		typedef struct {
 #define STRUCT_FIELD(ctype,size,pre,name)	ctype	name;
 #define STRUCT_AFIELD(ctype,size,pre,name,n)	ctype	name[n];
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #define STRUCT_AFIELD_A(ctype,size,align,pre,name,n)	ctype	name[n] __attribute__((aligned(align)));
+#else
+#define STRUCT_AFIELD_A(ctype,size,align,pre,name,n)	ctype	name[n];
+#endif
 #define STRUCT_END(sname)	} sname;
 #endif /*_ASMLANGUAGE||__ASSEMBLER__*/
 

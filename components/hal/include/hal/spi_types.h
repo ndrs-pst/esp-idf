@@ -43,8 +43,9 @@ typedef enum {
     /* Common Event */
     SPI_EV_TRANS          = BIT(8), ///< A transaction has done
 } spi_event_t;
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 FLAG_ATTR(spi_event_t)
-
+#endif
 
 /** @cond */    //Doxy command to hide preprocessor definitions from docs */
 
