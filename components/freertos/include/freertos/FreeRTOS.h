@@ -70,7 +70,9 @@ extern "C" {
 
 /* Required if struct _reent is used. */
 #if ( configUSE_NEWLIB_REENTRANT == 1 )
+    #if defined(__GNUC__) /* ES1902-03 */
 	#include <reent.h>
+    #endif
 #endif
 /*
  * Check all the required application specific macros have been defined.
@@ -1170,7 +1172,9 @@ typedef struct xSTATIC_TCB
 		uint32_t		ulDummy16;
 	#endif
 	#if ( configUSE_NEWLIB_REENTRANT == 1 )
+        #if defined(__GNUC__) /* ES1902-03 */
 		struct	_reent	xDummy17;
+        #endif
 	#endif
 	#if ( configUSE_TASK_NOTIFICATIONS == 1 )
 		uint32_t 		ulDummy18;
