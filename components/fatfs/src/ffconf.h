@@ -1,3 +1,10 @@
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+#include <sys/param.h>
+#else
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 #include "sdkconfig.h"
 
 /*---------------------------------------------------------------------------/
@@ -304,7 +311,9 @@
 /  SemaphoreHandle_t and etc. A header file for O/S definitions needs to be
 /  included somewhere in the scope of ff.h. */
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #include <sys/param.h>
+#endif
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
