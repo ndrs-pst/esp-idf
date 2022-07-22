@@ -508,7 +508,7 @@ err:
 static esp_err_t esp_emac_config_data_interface(const eth_mac_config_t *config, emac_esp32_t *emac)
 {
     esp_err_t ret = ESP_OK;
-    switch (config->interface) {
+    switch (config->_interface) {
     case EMAC_DATA_INTERFACE_MII:
         emac->clock_config = config->clock_config;
         /* MII interface GPIO initialization */
@@ -564,7 +564,7 @@ static esp_err_t esp_emac_config_data_interface(const eth_mac_config_t *config, 
         }
         break;
     default:
-        ESP_GOTO_ON_FALSE(false, ESP_ERR_INVALID_ARG, err, TAG, "invalid EMAC Data Interface:%d", config->interface);
+        ESP_GOTO_ON_FALSE(false, ESP_ERR_INVALID_ARG, err, TAG, "invalid EMAC Data Interface:%d", config->_interface);
     }
 err:
     return ret;

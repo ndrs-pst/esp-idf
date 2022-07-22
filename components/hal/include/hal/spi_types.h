@@ -44,7 +44,9 @@ typedef enum {
     /* Common Event */
     SPI_EV_TRANS          = BIT(8), ///< A transaction has done
 } spi_event_t;
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 FLAG_ATTR(spi_event_t)
+#endif
 
 /**
  * @brief Line mode of SPI transaction phases: CMD, ADDR, DOUT/DIN.
