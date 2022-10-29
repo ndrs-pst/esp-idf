@@ -101,6 +101,25 @@ void unity_testcase_register(test_desc_t* desc);
     }\
     static void UNITY_TEST_UID(test_func_) (void)
 
+/* #CUSTOM@NDRS @note Use this macro to shorten file name of __FILE__ by using __THIS_FILE_NAME__ */
+#define TEST_CASE_DECL(name_, desc_, __THIS_FILE_NAME__) \
+    static void UNITY_TEST_UID(test_func_) (void); \
+    static void __attribute__((constructor)) UNITY_TEST_UID(test_reg_helper_) () \
+    { \
+        static test_func test_fn_[] = {&UNITY_TEST_UID(test_func_)}; \
+        static test_desc_t UNITY_TEST_UID(test_desc_) = { \
+            .name = name_, \
+            .desc = desc_, \
+            .fn = test_fn_, \
+            .file = __THIS_FILE_NAME__, \
+            .line = __LINE__, \
+            .test_fn_count = 1, \
+            .test_fn_name = NULL, \
+            .next = NULL \
+        }; \
+        unity_testcase_register( & UNITY_TEST_UID(test_desc_) ); \
+    }\
+    static void UNITY_TEST_UID(test_func_) (void)
 
 /*
  * Multiple stages test cases will handle the case that test steps are separated by DUT reset.

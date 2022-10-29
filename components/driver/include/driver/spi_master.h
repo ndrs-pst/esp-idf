@@ -151,7 +151,7 @@ typedef struct {
 } spi_transaction_ext_t ;
 
 
-typedef struct spi_device_t *spi_device_handle_t;  ///< Handle for a device on a SPI bus
+typedef struct spi_device_t* spi_device_handle_t;  ///< Handle for a device on a SPI bus
 /**
  * @brief Allocate a device on a SPI bus
  *
@@ -173,6 +173,34 @@ typedef struct spi_device_t *spi_device_handle_t;  ///< Handle for a device on a
  */
 esp_err_t spi_bus_add_device(spi_host_device_t host_id, const spi_device_interface_config_t *dev_config, spi_device_handle_t *handle);
 
+/**
+ * @brief Set transfer frequency to a device on a SPI bus
+ * @param handle Pointer to variable to hold the device handle
+ * @param hz Transfer frequency (Hz)
+ * @return Set frequency (Hz)
+ */
+int spi_bus_frequency(spi_device_handle_t handle, int hz);      /* #CUSTOM@NDRS */
+
+/**
+ * @brief Set bus format to a device on a SPI bus
+ * @param handle Pointer to variable to hold the device handle
+ * @param bits   Number of bits per transfer
+ * @param mode   SPI mode (0, 1, 2, 3)
+ * @param slave  0: master, 1: slave
+ * @return
+ *         - ESP_ERR_INVALID_ARG   if parameter is invalid
+ *         - ESP_OK                on success
+ */
+esp_err_t spi_bus_format(spi_device_handle_t handle, int bits, int mode, int slave);   /* #CUSTOM@NDRS */
+
+/**
+ * @brief Check SPI bus is busy or not
+ * @param handle Pointer to variable to hold the device handle
+ * @return
+ *         - 1 : Bus Busy
+ *         - 0 : Bus Idle
+ */
+uint8_t spi_bus_device_is_busy(spi_device_handle_t handle);     /* #CUSTOM@NDRS */
 
 /**
  * @brief Remove a device from the SPI bus
@@ -206,6 +234,13 @@ esp_err_t spi_bus_remove_device(spi_device_handle_t handle);
  */
 esp_err_t spi_device_queue_trans(spi_device_handle_t handle, spi_transaction_t *trans_desc, TickType_t ticks_to_wait);
 
+/**
+ * @brief Set bus duplex mode
+ * @param handle Pointer to variable to hold the device handle
+ * @param _half_duplex Half/Full Duplex Mode
+ * @return ESP_OK if desired is available, otherwise fail.
+ */
+esp_err_t spi_device_set_duplex(spi_device_handle_t handle, bool _half_duplex);     /* #CUSTOM@NDRS */
 
 /**
  * @brief Get the result of a SPI transaction queued earlier by ``spi_device_queue_trans``.
@@ -344,7 +379,11 @@ void spi_device_release_bus(spi_device_handle_t dev);
  *
  * @return Actual working frequency that most fit.
  */
-int spi_cal_clock(int fapb, int hz, int duty_cycle, uint32_t *reg_o) __attribute__((deprecated));
+int spi_cal_clock(int fapb, int hz, int duty_cycle, uint32_t* reg_o)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief Calculate the working frequency that is most close to desired frequency.
@@ -371,7 +410,7 @@ int spi_get_actual_clock(int fapb, int hz, int duty_cycle);
   *
   * @note If **dummy_o* is not zero, it means dummy bits should be applied in half duplex mode, and full duplex mode may not work.
   */
-void spi_get_timing(bool gpio_is_used, int input_delay_ns, int eff_clk, int *dummy_o, int *cycles_remain_o);
+void spi_get_timing(bool gpio_is_used, int input_delay_ns, int eff_clk, int* dummy_o, int* cycles_remain_o);
 
 /**
   * @brief Get the frequency limit of current configurations.

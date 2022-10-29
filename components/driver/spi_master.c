@@ -450,6 +450,84 @@ esp_err_t spi_bus_remove_device(spi_device_handle_t handle)
     return ESP_OK;
 }
 
+/* CUSTOM@NDRS */
+int spi_bus_frequency(spi_device_handle_t handle, int hz) {
+    spi_device_interface_config_t* dev_cfg;
+    const spi_bus_attr_t* bus_attr;
+    spi_hal_timing_param_t timing_param;
+    spi_hal_timing_conf_t  temp_timing_conf;
+    int half_duplex;
+    int no_compensate;
+    int duty_cycle;
+    int use_gpio;
+    int freq;
+    esp_err_t err;
+
+    dev_cfg  = &handle->cfg;
+    bus_attr = handle->host->bus_attr;
+
+    // Input parameters to calculate timing configuration
+    if (dev_cfg->flags & SPI_DEVICE_HALFDUPLEX) {
+        half_duplex = 1;
+    }
+    else {
+        half_duplex = 0;
+    }
+
+    if (dev_cfg->flags & SPI_DEVICE_NO_DUMMY) {
+        no_compensate = 1;
+    }
+    else {
+        no_compensate = 0;
+    }
+
+    if (dev_cfg->duty_cycle_pos == 0) {
+        duty_cycle = 128;
+    }
+    else {
+        duty_cycle = dev_cfg->duty_cycle_pos;
+    }
+
+    if (bus_attr->flags & SPICOMMON_BUSFLAG_IOMUX_PINS) {
+        use_gpio = 0;
+    }
+    else {
+        use_gpio = 1;
+    }
+
+    timing_param.half_duplex    = half_duplex;
+    timing_param.no_compensate  = no_compensate;
+    timing_param.clock_speed_hz = hz;
+    timing_param.duty_cycle     = duty_cycle;
+    timing_param.input_delay_ns = dev_cfg->input_delay_ns;
+    timing_param.use_gpio       = use_gpio;
+
+    // Output values of timing configuration
+    err = spi_hal_cal_clock_conf(&timing_param, &freq, &temp_timing_conf);
+    if (err == ESP_OK) {
+        handle->hal_dev.timing_conf = temp_timing_conf;
+        dev_cfg->clock_speed_hz     = hz;
+    }
+
+    return (freq);
+}
+
+/* #CUSTOM@NDRS */
+esp_err_t spi_bus_format(spi_device_handle_t handle, int bits, int mode, int slave) {
+    spi_device_interface_config_t* dev_cfg;
+
+    (void) slave;                           /* Unsupport slave configuration */
+    (void) bits;                            /* Unsupport transfer bits size (default 8 bits) */
+
+    SPI_CHECK(handle != NULL, "invalid handle", ESP_ERR_INVALID_ARG);
+    SPI_CHECK(((3 >= mode) && (mode >= 0)), "invalid mode value", ESP_ERR_INVALID_ARG);
+
+    dev_cfg = &handle->cfg;
+    dev_cfg->mode = mode;
+
+    return (ESP_OK);
+}
+
 int spi_cal_clock(int fapb, int hz, int duty_cycle, uint32_t *reg_o)
 {
     return spi_ll_master_cal_clock(fapb, hz, duty_cycle, reg_o);
@@ -489,6 +567,22 @@ static SPI_MASTER_ISR_ATTR spi_device_t *get_acquiring_dev(spi_host_t *host)
 static inline SPI_MASTER_ISR_ATTR bool spi_bus_device_is_polling(spi_device_t *dev)
 {
     return get_acquiring_dev(dev->host) == dev && dev->host->polling;
+}
+
+/* #CUSTOM@NDRS */
+uint8_t spi_bus_device_is_busy(spi_device_handle_t handle) {
+    spi_device_t* dev;
+    uint8_t ret;
+
+    dev = get_acquiring_dev(handle->host);
+    if (dev != NULL) {
+        ret = 1U;
+    }
+    else {
+        ret = 0U;
+    }
+
+    return (ret);
 }
 
 /*-----------------------------------------------------------------------------
@@ -781,6 +875,67 @@ static SPI_MASTER_ISR_ATTR esp_err_t setup_priv_desc(spi_transaction_t *trans_de
 clean_up:
     uninstall_priv_desc(new_desc);
     return ESP_ERR_NO_MEM;
+}
+
+/* #CUSTOM@NDRS */
+esp_err_t spi_device_set_duplex(spi_device_handle_t handle, bool _half_duplex) {
+    spi_device_interface_config_t* dev_cfg;
+    const spi_bus_attr_t* bus_attr;
+    spi_hal_timing_param_t timing_param;
+    spi_hal_timing_conf_t  temp_timing_conf;
+    int half_duplex;
+    int no_compensate;
+    int duty_cycle;
+    int use_gpio;
+    int freq;
+    esp_err_t err;
+
+    dev_cfg = &handle->cfg;
+    bus_attr = handle->host->bus_attr;
+
+    // Input parameters to calculate timing configuration
+    if (_half_duplex == true) {
+        half_duplex = 1;
+    }
+    else {
+        half_duplex = 0;
+    }
+
+    if (dev_cfg->flags & SPI_DEVICE_NO_DUMMY) {
+        no_compensate = 1;
+    }
+    else {
+        no_compensate = 0;
+    }
+
+    if (dev_cfg->duty_cycle_pos == 0) {
+        duty_cycle = 128;
+    }
+    else {
+        duty_cycle = dev_cfg->duty_cycle_pos;
+    }
+
+    if (bus_attr->flags & SPICOMMON_BUSFLAG_IOMUX_PINS) {
+        use_gpio = 0;
+    }
+    else {
+        use_gpio = 1;
+    }
+
+    timing_param.half_duplex    = half_duplex;
+    timing_param.no_compensate  = no_compensate;
+    timing_param.clock_speed_hz = dev_cfg->clock_speed_hz;
+    timing_param.duty_cycle     = duty_cycle;
+    timing_param.input_delay_ns = dev_cfg->input_delay_ns;
+    timing_param.use_gpio       = use_gpio;
+
+    // Output values of timing configuration
+    err = spi_hal_cal_clock_conf(&timing_param, &freq, &temp_timing_conf);
+    if (err == ESP_OK) {
+        handle->hal_dev.timing_conf = temp_timing_conf;
+    }
+
+    return (err);
 }
 
 esp_err_t SPI_MASTER_ATTR spi_device_queue_trans(spi_device_handle_t handle, spi_transaction_t *trans_desc, TickType_t ticks_to_wait)
