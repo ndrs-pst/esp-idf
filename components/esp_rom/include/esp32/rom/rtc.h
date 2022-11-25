@@ -100,6 +100,7 @@ typedef enum {
 } RESET_REASON;
 
 // Check if the reset reason defined in ROM is compatible with soc/reset_reasons.h
+#if !defined(_MSC_VER) /* #CUSTOM@NDRS */
 _Static_assert((soc_reset_reason_t)POWERON_RESET == RESET_REASON_CHIP_POWER_ON, "POWERON_RESET != RESET_REASON_CHIP_POWER_ON");
 _Static_assert((soc_reset_reason_t)SW_RESET == RESET_REASON_CORE_SW, "SW_RESET != RESET_REASON_CORE_SW");
 _Static_assert((soc_reset_reason_t)DEEPSLEEP_RESET == RESET_REASON_CORE_DEEP_SLEEP, "DEEPSLEEP_RESET != RESET_REASON_CORE_DEEP_SLEEP");
@@ -111,6 +112,7 @@ _Static_assert((soc_reset_reason_t)SW_CPU_RESET == RESET_REASON_CPU0_SW, "SW_CPU
 _Static_assert((soc_reset_reason_t)RTCWDT_CPU_RESET == RESET_REASON_CPU0_RTC_WDT, "RTCWDT_CPU_RESET != RESET_REASON_CPU0_RTC_WDT");
 _Static_assert((soc_reset_reason_t)RTCWDT_BROWN_OUT_RESET == RESET_REASON_SYS_BROWN_OUT, "RTCWDT_BROWN_OUT_RESET != RESET_REASON_SYS_BROWN_OUT");
 _Static_assert((soc_reset_reason_t)RTCWDT_RTC_RESET == RESET_REASON_SYS_RTC_WDT, "RTCWDT_RTC_RESET != RESET_REASON_SYS_RTC_WDT");
+#endif
 
 typedef enum {
     NO_SLEEP        = 0,
@@ -226,7 +228,11 @@ static inline void rtc_suppress_rom_log(void)
   *
   * @return None
   */
-void __attribute__((noreturn)) software_reset(void);
+void
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((noreturn))
+#endif
+software_reset(void);
 
 /**
   * @brief Software Reset digital core.

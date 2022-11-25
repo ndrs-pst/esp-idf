@@ -32,6 +32,9 @@
 /// Maximum number of dummy bytes between the request and response (minimum is 1)
 #define SDSPI_RESPONSE_MAX_DELAY  8
 
+// #CUSTOM@NDRS : WORKAROUND BETWEEN MFRC522 and microSD ("driver/spi_common.h")
+extern bool spicommon_periph_in_use(spi_host_device_t host);
+
 /**
  * @brief Structure containing run time configuration for a single SD slot
  *
@@ -950,7 +953,10 @@ esp_err_t sdspi_host_io_int_wait(sdspi_dev_handle_t handle, TickType_t timeout_t
 //Deprecated, make use of new sdspi_host_init_device
 esp_err_t sdspi_host_init_slot(int slot, const sdspi_slot_config_t* slot_config)
 {
-    esp_err_t ret = ESP_OK;
+    bool in_use_flg;
+    esp_err_t ret;
+
+    ret = ESP_OK;
     if (get_slot_info(slot) != NULL) {
         ESP_LOGE(TAG, "Bus already initialized. Call `sdspi_host_init_dev` to attach an sdspi device to an initialized bus.");
         return ESP_ERR_INVALID_STATE;
@@ -966,11 +972,17 @@ esp_err_t sdspi_host_init_slot(int slot, const sdspi_slot_config_t* slot_config)
         .quadwp_io_num = GPIO_NUM_NC,
         .quadhd_io_num = GPIO_NUM_NC
     };
-    ret = spi_bus_initialize(host_id, &buscfg,
-            slot_config->dma_channel);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "spi_bus_initialize failed with rc=0x%x", ret);
-        return ret;
+    // #CUSTOM@NDRS : WORKAROUND BETWEEN MFRC522 and microSD
+    in_use_flg = spicommon_periph_in_use((spi_host_device_t)slot);
+    if (in_use_flg == false) {
+        ret = spi_bus_initialize((spi_host_device_t)slot, &buscfg, slot_config->dma_channel);
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "spi_bus_initialize failed with rc=0x%x", ret);
+            return ret;
+        }
+    }
+    else {
+        // Assume that others already claim that peripheral
     }
 
     sdspi_dev_handle_t sdspi_handle;

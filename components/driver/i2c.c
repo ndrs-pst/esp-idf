@@ -206,7 +206,7 @@ static i2c_clk_alloc_t i2c_clk_alloc[I2C_SCLK_MAX] = {
 };
 
 static i2c_obj_t *p_i2c_obj[I2C_NUM_MAX] = {0};
-static void i2c_isr_handler_default(void *arg);
+static void i2c_isr_handler_default(void* arg);
 static void IRAM_ATTR i2c_master_cmd_begin_static(i2c_port_t i2c_num, portBASE_TYPE* HPTaskAwoken);
 static esp_err_t i2c_hw_fsm_reset(i2c_port_t i2c_num);
 
@@ -480,7 +480,7 @@ esp_err_t i2c_reset_rx_fifo(i2c_port_t i2c_num)
     return ESP_OK;
 }
 
-static void IRAM_ATTR i2c_isr_handler_default(void *arg)
+static void IRAM_ATTR i2c_isr_handler_default(void* arg)
 {
     i2c_obj_t *p_i2c = (i2c_obj_t *) arg;
     int i2c_num = p_i2c->i2c_num;
@@ -722,6 +722,13 @@ esp_err_t i2c_param_config(i2c_port_t i2c_num, const i2c_config_t *i2c_conf)
     i2c_hal_update_config(&(i2c_context[i2c_num].hal));
     I2C_EXIT_CRITICAL(&(i2c_context[i2c_num].spinlock));
     return ESP_OK;
+}
+
+/* CUSTOM@NDRS */
+void i2c_bus_frequency(i2c_port_t i2c_num, int hz) {
+    I2C_ENTER_CRITICAL(&(i2c_context[i2c_num].spinlock));
+    i2c_hal_set_bus_timing(&(i2c_context[i2c_num].hal), hz, I2C_SCLK_DEFAULT);
+    I2C_EXIT_CRITICAL(&(i2c_context[i2c_num].spinlock));
 }
 
 esp_err_t i2c_set_period(i2c_port_t i2c_num, int high_period, int low_period)
@@ -1097,6 +1104,25 @@ void i2c_cmd_link_delete(i2c_cmd_handle_t cmd_handle)
     cmd->head = NULL;
     free(cmd_handle);
     return;
+}
+
+/* #CUSTOM@NDRS */
+void i2c_cmd_link_free(i2c_cmd_handle_t cmd_handle) {
+    if (cmd_handle == NULL) {
+        // pass
+    }
+    else {
+        i2c_cmd_desc_t *cmd = (i2c_cmd_desc_t *) cmd_handle;
+        while (cmd->free != NULL) {
+            i2c_cmd_link_t* ptmp = cmd->free;
+            cmd->free = cmd->free->next;
+            free(ptmp);
+        }
+
+        cmd->cur  = NULL;
+        cmd->free = NULL;
+        cmd->head = NULL;
+    }
 }
 
 static esp_err_t i2c_cmd_allocate(i2c_cmd_desc_t *cmd_desc, size_t n, size_t size, void** outptr)

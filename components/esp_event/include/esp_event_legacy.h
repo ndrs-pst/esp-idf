@@ -153,7 +153,11 @@ typedef esp_err_t (*system_event_handler_t)(esp_event_base_t event_base,
   * @return ESP_OK : succeed
   * @return others : fail
   */
-esp_err_t esp_event_send(system_event_t *event) __attribute__ ((deprecated));
+esp_err_t esp_event_send(system_event_t* event)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
   * @brief  Send a event to event task
@@ -192,7 +196,11 @@ esp_err_t esp_event_send_internal(esp_event_base_t event_base,
  * @param  event   pointer to event to be handled
  * @return ESP_OK if an event was handled successfully
  */
-esp_err_t esp_event_process_default(system_event_t *event) __attribute__ ((deprecated));
+esp_err_t esp_event_process_default(system_event_t* event)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
   * @brief  Install default event handlers for Ethernet interface
@@ -207,7 +215,11 @@ void esp_event_set_default_eth_handlers(void);
   *
   * @note This API is part of the legacy event system. New code should use event library API in esp_event.h
   */
-void esp_event_set_default_wifi_handlers(void) __attribute__ ((deprecated));
+void esp_event_set_default_wifi_handlers(void)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief  Application specified event callback function
@@ -238,7 +250,11 @@ typedef esp_err_t (*system_event_cb_t)(void *ctx, system_event_t *event);
  *    - ESP_OK: succeed
  *    - others: fail
  */
-esp_err_t esp_event_loop_init(system_event_cb_t cb, void *ctx) __attribute__ ((deprecated));
+esp_err_t esp_event_loop_init(system_event_cb_t cb, void* ctx)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief  Set application specified event callback function
@@ -254,7 +270,11 @@ esp_err_t esp_event_loop_init(system_event_cb_t cb, void *ctx) __attribute__ ((d
  *
  * @return old callback
  */
-system_event_cb_t esp_event_loop_set_cb(system_event_cb_t cb, void *ctx) __attribute__ ((deprecated));
+system_event_cb_t esp_event_loop_set_cb(system_event_cb_t cb, void* ctx)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 #ifdef __cplusplus
 }

@@ -1331,7 +1331,7 @@ esp_err_t esp_ble_gap_register_callback(esp_gap_ble_cb_t callback);
  *                  - other  : failed
  *
  */
-esp_err_t esp_ble_gap_config_adv_data (esp_ble_adv_data_t *adv_data);
+esp_err_t esp_ble_gap_config_adv_data(esp_ble_adv_data_t const* adv_data); /* #CUSTOM@NDRS */
 
 
 
@@ -1381,7 +1381,7 @@ esp_err_t esp_ble_gap_stop_scanning(void);
  *                  - other  : failed
  *
  */
-esp_err_t esp_ble_gap_start_advertising (esp_ble_adv_params_t *adv_params);
+esp_err_t esp_ble_gap_start_advertising(esp_ble_adv_params_t const* adv_params); /* #CUSTOM@NDRS */
 
 
 

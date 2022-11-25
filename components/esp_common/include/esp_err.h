@@ -11,6 +11,41 @@
 #include <assert.h>
 #include "esp_compiler.h"
 
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+static inline int __builtin_ffs(unsigned int x) {
+  if (x == 0) {
+    return (0);
+  }
+
+  int num = 1;
+  if ((x & 0xFFFF) == 0) {
+    num += 16;
+    x >>= 16;
+  }
+
+  if ((x & 0xFF) == 0) {
+    num += 8;
+    x >>= 8;
+  }
+
+  if ((x & 0x0F) == 0) {
+    num += 4;
+    x >>= 4;
+  }
+
+  if ((x & 0x03) == 0) {
+    num += 2;
+    x >>= 2;
+  }
+
+  if ((x & 0x01) == 0) {
+    num += 1;
+  }
+
+  return (num);
+}
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -75,7 +110,11 @@ const char *esp_err_to_name(esp_err_t code);
 const char *esp_err_to_name_r(esp_err_t code, char *buf, size_t buflen);
 
 /** @cond */
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 void _esp_error_check_failed(esp_err_t rc, const char *file, int line, const char *function, const char *expression) __attribute__((noreturn));
+#else
+void _esp_error_check_failed(esp_err_t rc, const char *file, int line, const char *function, const char *expression);
+#endif
 
 /** @cond */
 void _esp_error_check_failed_without_abort(esp_err_t rc, const char *file, int line, const char *function, const char *expression);
