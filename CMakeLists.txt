@@ -164,6 +164,7 @@ if(CONFIG_ESP_SYSTEM_USE_EH_FRAME)
 endif()
 
 list(APPEND link_options "-fno-lto")
+list(APPEND compile_options "-fdiagnostics-color=always")
 
 # Placing jump tables in flash would cause issues with code that required
 # to be placed in IRAM

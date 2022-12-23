@@ -26,6 +26,7 @@
 extern "C" {
 #endif
 
+#define TARGET_WDT_PATCH_TO_IDF   1U        // #CUSTOM@NDRS : Marking of external watchdog clear inside SPI flash sector erase !!!
 #define ESP_ERR_FLASH_OP_FAIL    (ESP_ERR_FLASH_BASE + 1)
 #define ESP_ERR_FLASH_OP_TIMEOUT (ESP_ERR_FLASH_BASE + 2)
 

@@ -641,7 +641,12 @@ esp_err_t uart_disable_pattern_det_intr(uart_port_t uart_num);
  *     - ESP_OK Success
  *     - ESP_FAIL Parameter error
  */
-esp_err_t uart_enable_pattern_det_intr(uart_port_t uart_num, char pattern_chr, uint8_t chr_num, int chr_tout, int post_idle, int pre_idle) __attribute__((deprecated));
+esp_err_t uart_enable_pattern_det_intr(uart_port_t uart_num, char pattern_chr, uint8_t chr_num, int chr_tout, int post_idle, int pre_idle)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
+
 #endif
 
 /**

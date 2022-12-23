@@ -21,7 +21,7 @@ extern "C" {
 
 static inline void __attribute__((always_inline)) compare_and_set_native(volatile uint32_t *addr, uint32_t compare, uint32_t *set)
 {
-#if (XCHAL_HAVE_S32C1I > 0)
+#if ((XCHAL_HAVE_S32C1I > 0) && defined(__GNUC__)) /* #CUSTOM@NDRS */
     __asm__ __volatile__ (
         "WSR 	    %2,SCOMPARE1 \n"
         "S32C1I     %0, %1, 0	 \n"
@@ -31,6 +31,7 @@ static inline void __attribute__((always_inline)) compare_and_set_native(volatil
 #else
     uint32_t old_value;
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #ifdef __XTENSA__
     // No S32C1I, so do this by disabling and re-enabling interrupts (slower)
     uint32_t intlevel;
@@ -39,12 +40,14 @@ static inline void __attribute__((always_inline)) compare_and_set_native(volatil
 #else
     unsigned old_mstatus = RV_CLEAR_CSR(mstatus, MSTATUS_MIE);
 #endif
+#endif
 
     old_value = *addr;
     if (old_value == compare) {
         *addr = *set;
     }
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #ifdef __XTENSA__
     __asm__ __volatile__ ("memw \n"
                           "wsr %0, ps\n"
@@ -52,6 +55,7 @@ static inline void __attribute__((always_inline)) compare_and_set_native(volatil
 
 #else
     RV_SET_CSR(mstatus, old_mstatus & MSTATUS_MIE);
+#endif
 #endif
 
     *set = old_value;

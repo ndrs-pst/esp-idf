@@ -56,7 +56,11 @@ esp_err_t esp_eth_del_netif_glue(esp_eth_netif_glue_handle_t eth_netif_glue);
  *      - ESP_OK: set default IP layer handlers successfully
  *      - others: other failure occurred during register esp_event handler
  */
-esp_err_t esp_eth_set_default_handlers(void *esp_netif)  __attribute__ ((deprecated));
+esp_err_t esp_eth_set_default_handlers(void *esp_netif)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__ ((deprecated))
+#endif
+;
 
 /**
  * @brief Unregister default IP layer handlers for Ethernet

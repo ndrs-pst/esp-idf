@@ -87,9 +87,11 @@ typedef enum {
  * @brief ADC digital controller (DMA mode) output data format option.
  */
 typedef enum {
+#if !defined(_MSC_VER)  /* #CUSTOM@NDRS */
     ADC_DIGI_FORMAT_12BIT __attribute__((deprecated)),  /*!<ADC to DMA data format,                [15:12]-channel, [11: 0]-12 bits ADC data (`adc_digi_output_data_t`). Note: For single convert mode. */
     ADC_DIGI_FORMAT_11BIT __attribute__((deprecated)),  /*!<ADC to DMA data format, [15]-adc unit, [14:11]-channel, [10: 0]-11 bits ADC data (`adc_digi_output_data_t`). Note: For multi or alter convert mode. */
     ADC_DIGI_FORMAT_MAX   __attribute__((deprecated)),
+#endif
 
     ADC_DIGI_OUTPUT_FORMAT_TYPE1,   ///< See `adc_digi_output_data_t.type1`
     ADC_DIGI_OUTPUT_FORMAT_TYPE2,   ///< See `adc_digi_output_data_t.type2`

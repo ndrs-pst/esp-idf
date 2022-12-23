@@ -18,7 +18,9 @@
 extern "C" {
 #endif
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #warning hal/can_types.h is deprecated, please use hal/twai_types.h instead
+#endif
 
 #include "hal/twai_types.h"
 

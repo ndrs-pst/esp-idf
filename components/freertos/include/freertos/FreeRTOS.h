@@ -69,7 +69,9 @@
 
 /* Required if struct _reent is used. */
 #if ( configUSE_NEWLIB_REENTRANT == 1 )
+    #if defined(__GNUC__) /* #CUSTOM@NDRS */
     #include <reent.h>
+    #endif
 #endif
 
 /*

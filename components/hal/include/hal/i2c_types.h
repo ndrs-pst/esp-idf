@@ -89,7 +89,11 @@ typedef enum{
     I2C_CMD_READ,          /*!<I2C read command */
     I2C_CMD_STOP,          /*!<I2C stop command */
     I2C_CMD_END            /*!<I2C end command */
-} i2c_opmode_t __attribute__((deprecated));
+} i2c_opmode_t
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 #endif
 
 #ifdef __cplusplus

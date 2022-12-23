@@ -39,6 +39,10 @@
 #include "esp32h2/rom/spi_flash.h"
 #endif
 
+#if ((TARGET_EMU_H17WF == 1U) || (TARGET_LCU_I18WF == 1U))
+#include "mqtt/ex_wdt.h"                    /* #CUSTOM@NDRS */
+#endif
+
 static const char TAG[] = "spi_flash";
 
 #ifdef CONFIG_SPI_FLASH_WRITE_CHUNK_SIZE
@@ -596,6 +600,10 @@ esp_err_t IRAM_ATTR esp_flash_erase_region(esp_flash_t *chip, uint32_t start, ui
                 return err;
             }
         }
+
+        #if ((TARGET_EMU_H17WF == 1U) || (TARGET_LCU_I18WF == 1U))
+        hw_wdt_clr();                       /* #CUSTOM@NDRS */
+        #endif
 
         err = rom_spiflash_api_funcs->start(chip);
         if (err != ESP_OK) {
