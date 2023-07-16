@@ -144,7 +144,11 @@ uint32_t esp_log_early_timestamp(void);
  *
  * This function or these macros should not be used from an interrupt.
  */
-void esp_log_write(esp_log_level_t level, const char* tag, const char* format, ...) __attribute__ ((format (printf, 3, 4)));
+void esp_log_write(esp_log_level_t level, const char* tag, const char* format, ...)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((format(printf, 3, 4)))
+#endif
+;
 
 /**
  * @brief Write message into the log, va_list variant
@@ -341,7 +345,7 @@ void esp_log_writev(esp_log_level_t level, const char* tag, const char* format, 
         }} while(0)
 
 #ifndef BOOTLOADER_BUILD
-#if defined(__cplusplus) && (__cplusplus >  201703L)
+#if defined(__cplusplus) && (__cplusplus >  201703L) && !defined(_MSC_VER)
 #define ESP_LOGE( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_ERROR,   tag, format __VA_OPT__(,) __VA_ARGS__)
 #define ESP_LOGW( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_WARN,    tag, format __VA_OPT__(,) __VA_ARGS__)
 #define ESP_LOGI( tag, format, ... ) ESP_LOG_LEVEL_LOCAL(ESP_LOG_INFO,    tag, format __VA_OPT__(,) __VA_ARGS__)
@@ -397,7 +401,7 @@ void esp_log_writev(esp_log_level_t level, const char* tag, const char* format, 
  *
  * @see ``printf``
  */
-#if defined(__cplusplus) && (__cplusplus >  201703L)
+#if defined(__cplusplus) && (__cplusplus >  201703L) && !defined(_MSC_VER)
 #if CONFIG_LOG_TIMESTAMP_SOURCE_RTOS
 #define ESP_LOG_LEVEL(level, tag, format, ...) do {                     \
         if (level==ESP_LOG_ERROR )          { esp_log_write(ESP_LOG_ERROR,      tag, LOG_FORMAT(E, format), esp_log_timestamp(), tag __VA_OPT__(,) __VA_ARGS__); } \
@@ -460,7 +464,7 @@ void esp_log_writev(esp_log_level_t level, const char* tag, const char* format, 
  *
  * @see ``esp_rom_printf``,``ESP_LOGE``
  */
-#if defined(__cplusplus) && (__cplusplus >  201703L)
+#if defined(__cplusplus) && (__cplusplus >  201703L) && !defined(_MSC_VER)
 #define ESP_DRAM_LOGE( tag, format, ... ) ESP_DRAM_LOG_IMPL(tag, format, ESP_LOG_ERROR,   E __VA_OPT__(,) __VA_ARGS__)
 /// macro to output logs when the cache is disabled at ``ESP_LOG_WARN`` level.  @see ``ESP_DRAM_LOGW``,``ESP_LOGW``, ``esp_rom_printf``
 #define ESP_DRAM_LOGW( tag, format, ... ) ESP_DRAM_LOG_IMPL(tag, format, ESP_LOG_WARN,    W __VA_OPT__(,) __VA_ARGS__)

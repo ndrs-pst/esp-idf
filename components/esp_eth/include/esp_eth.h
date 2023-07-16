@@ -258,7 +258,11 @@ esp_err_t esp_eth_transmit(esp_eth_handle_t hdl, void *buf, size_t length);
 *                               in this case, value of returned "length" indicates the real size of incoming data.
 *       - ESP_FAIL: receive frame buffer failed because some other error occurred
 */
-esp_err_t esp_eth_receive(esp_eth_handle_t hdl, uint8_t *buf, uint32_t *length) __attribute__((deprecated("Ethernet driver is interrupt driven only, please register input callback with esp_eth_update_input_path")));
+esp_err_t esp_eth_receive(esp_eth_handle_t hdl, uint8_t* buf, uint32_t* length)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated("Ethernet driver is interrupt driven only, please register input callback with esp_eth_update_input_path")))
+#endif
+;
 
 /**
 * @brief Misc IO function of Etherent driver

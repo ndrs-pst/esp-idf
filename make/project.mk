@@ -500,10 +500,11 @@ CFLAGS := $(strip \
 
 # List of flags to pass to C++ compiler
 # If any flags are defined in application Makefile, add them at the end.
+# #CUSTOM@NDRS : std=gnu++11 -> gnu++17
 CXXFLAGS ?=
 EXTRA_CXXFLAGS ?=
 CXXFLAGS := $(strip \
-	-std=gnu++11 \
+	-std=gnu++17 \
 	$(OPTIMIZATION_FLAGS) $(DEBUG_FLAGS) \
 	$(COMMON_FLAGS) \
 	$(COMMON_WARNING_FLAGS) \

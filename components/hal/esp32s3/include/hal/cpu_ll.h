@@ -31,11 +31,16 @@ extern "C" {
 static inline uint32_t IRAM_ATTR cpu_ll_get_core_id(void)
 {
     uint32_t id;
+    #if defined(__GNUC__) /* #CUSTOM@NDRS */
     asm volatile (
         "rsr.prid %0\n"
         "extui %0,%0,13,1"
         :"=r"(id));
-    return id;
+    #else
+    id = 0U;
+    #endif
+
+    return (id);
 }
 
 static inline uint32_t IRAM_ATTR cpu_ll_get_cycle_count(void)

@@ -16,7 +16,11 @@
 #define _TCPIP_ADAPTER_TYPES_H_
 
 #include "lwip/ip_addr.h"
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #include "dhcpserver/dhcpserver.h"
+#else
+#include "apps/dhcpserver/dhcpserver.h"
+#endif
 #include "esp_netif_sta_list.h"
 
 #ifdef __cplusplus

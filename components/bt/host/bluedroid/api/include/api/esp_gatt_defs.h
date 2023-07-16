@@ -248,7 +248,11 @@ typedef enum {
 typedef struct {
     esp_bt_uuid_t   uuid;                   /*!< UUID */
     uint8_t         inst_id;                /*!< Instance id */
-} __attribute__((packed)) esp_gatt_id_t;
+}
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((packed))
+#endif
+esp_gatt_id_t;
 
 /**
  * @brief Gatt service id, include id
@@ -257,7 +261,11 @@ typedef struct {
 typedef struct {
     esp_gatt_id_t   id;                     /*!< Gatt id, include uuid and instance */
     bool            is_primary;             /*!< This service is primary or not */
-} __attribute__((packed)) esp_gatt_srvc_id_t;
+}
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((packed))
+#endif
+esp_gatt_srvc_id_t;
 
 /* relate to BTA_GATT_AUTH_REQ_xxx in bta/bta_gatt_api.h */
 /**

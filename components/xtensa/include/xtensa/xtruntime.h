@@ -88,6 +88,7 @@ typedef _xtos_handler_func *_xtos_handler;
  *  these macros are sometimes used to delineate critical sections;
  *  function calls are natural barriers (the compiler does not know
  *  whether a function modifies memory) unless declared to be inlined.  */
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 # define XTOS_SET_INTLEVEL(intlevel)	__extension__({ unsigned __tmp; \
 			__asm__ __volatile__(	"rsil	%0, " XTSTR(intlevel) "\n" \
 						: "=a" (__tmp) : : "memory" ); \
@@ -106,6 +107,12 @@ typedef _xtos_handler_func *_xtos_handler;
 						: : "a" (__tmp) : "memory" ); \
 			}while(0)
 # define XTOS_RESTORE_JUST_INTLEVEL(restoreval)	_xtos_set_intlevel(restoreval)
+#else
+#define XTOS_SET_INTLEVEL(intlevel)             (intlevel)
+#define XTOS_SET_MIN_INTLEVEL(intlevel)         (intlevel)
+#define XTOS_RESTORE_INTLEVEL(restoreval)       (restoreval)
+#define XTOS_RESTORE_JUST_INTLEVEL(restoreval)  (restoreval)
+#endif
 #else
 /*  In XEA1, we have to rely on INTENABLE register virtualization:  */
 extern unsigned		_xtos_set_vpri( unsigned vpri );
