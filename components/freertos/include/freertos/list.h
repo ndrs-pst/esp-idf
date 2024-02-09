@@ -91,7 +91,10 @@
     #define configLIST_VOLATILE
 #endif /* configSUPPORT_CROSS_MODULE_OPTIMISATION */
 
-/* *INDENT-OFF* */
+#if defined(_MSC_VER) /* #CUSTOM@NDRS */
+#define __GNUC_PREREQ(maj, min) 0
+#endif
+
 #ifdef __cplusplus
     extern "C" {
 #endif

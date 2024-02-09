@@ -146,7 +146,11 @@ esp_err_t ledc_update_duty(ledc_mode_t speed_mode, ledc_channel_t channel);
  *     - ESP_ERR_INVALID_ARG Parameter error
  */
 esp_err_t ledc_set_pin(int gpio_num, ledc_mode_t speed_mode, ledc_channel_t ledc_channel)
-    __attribute__((deprecated("use ledc_channel_config instead")));
+#if !defined(_MSC_VER) /* #CUSTOM@NDRS */
+__attribute__((deprecated("use ledc_channel_config instead")))
+#endif
+;
+
 /**
  * @brief LEDC stop.
  *        Disable LEDC output, and set idle level
