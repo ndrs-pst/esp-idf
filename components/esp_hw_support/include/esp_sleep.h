@@ -576,7 +576,11 @@ esp_err_t esp_deep_sleep_try_to_start(void);
  * @note The function does not do a return (no rejection). Even if wakeup source set before the sleep request
  * it goes to deep sleep anyway.
  */
-void esp_deep_sleep_start(void) __attribute__((__noreturn__));
+void esp_deep_sleep_start(void)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((noreturn))
+#endif
+;
 
 /**
  * @brief Enter light sleep with the configured wakeup options
@@ -628,7 +632,11 @@ esp_err_t esp_deep_sleep_try(uint64_t time_in_us);
  *
  * @param time_in_us  deep-sleep time, unit: microsecond
  */
-void esp_deep_sleep(uint64_t time_in_us) __attribute__((__noreturn__));
+void esp_deep_sleep(uint64_t time_in_us)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((noreturn))
+#endif
+;
 
 /**
   * @brief Register a callback to be called from the deep sleep prepare

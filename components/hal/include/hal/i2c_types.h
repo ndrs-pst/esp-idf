@@ -74,7 +74,9 @@ typedef enum {
     I2C_DATA_MODE_MAX
 } i2c_trans_mode_t;
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 __attribute__((deprecated("please use 'i2c_addr_bit_len_t' instead")))
+#endif
 typedef enum {
     I2C_ADDR_BIT_7 = 0,    /*!< I2C 7bit address for slave mode */
     I2C_ADDR_BIT_10,       /*!< I2C 10bit address for slave mode */

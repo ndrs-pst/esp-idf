@@ -753,6 +753,7 @@ typedef enum{
     ESP_BLE_WHITELIST_ADD        = 0X01,    /*!< add address to whitelist */
     ESP_BLE_WHITELIST_CLEAR      = 0x02,    /*!< clear all device in whitelist */
 } esp_ble_wl_operation_t;
+
 #if (BLE_42_FEATURE_SUPPORT == TRUE)
 typedef enum {
     ESP_BLE_DUPLICATE_EXCEPTIONAL_LIST_ADD      = 0,  /*!< Add device info into duplicate scan exceptional list */
@@ -1614,7 +1615,7 @@ esp_gap_ble_cb_t esp_ble_gap_get_callback(void);
  *                  - other  : failed
  *
  */
-esp_err_t esp_ble_gap_config_adv_data (esp_ble_adv_data_t *adv_data);
+esp_err_t esp_ble_gap_config_adv_data(esp_ble_adv_data_t const* adv_data); /* #CUSTOM@NDRS */
 
 
 
@@ -1664,7 +1665,7 @@ esp_err_t esp_ble_gap_stop_scanning(void);
  *                  - other  : failed
  *
  */
-esp_err_t esp_ble_gap_start_advertising (esp_ble_adv_params_t *adv_params);
+esp_err_t esp_ble_gap_start_advertising(esp_ble_adv_params_t const* adv_params); /* #CUSTOM@NDRS */
 
 
 
@@ -2256,10 +2257,10 @@ esp_err_t esp_ble_gap_set_preferred_default_phy(esp_ble_gap_phy_mask_t tx_phy_ma
 *
 */
 esp_err_t esp_ble_gap_set_preferred_phy(esp_bd_addr_t bd_addr,
-                                       esp_ble_gap_all_phys_t all_phys_mask,
-                                       esp_ble_gap_phy_mask_t tx_phy_mask,
-                                       esp_ble_gap_phy_mask_t rx_phy_mask,
-                                       esp_ble_gap_prefer_phy_options_t phy_options);
+                                        esp_ble_gap_all_phys_t all_phys_mask,
+                                        esp_ble_gap_phy_mask_t tx_phy_mask,
+                                        esp_ble_gap_phy_mask_t rx_phy_mask,
+                                        esp_ble_gap_prefer_phy_options_t phy_options);
 
 /**
 * @brief           This function is used by the Host to set the random device address specified by the Random_Address parameter.

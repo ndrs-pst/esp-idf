@@ -347,7 +347,11 @@ typedef enum {
 typedef struct {
     esp_bt_uuid_t   uuid;       /*!< @brief The UUID component of the GATT ID. */
     uint8_t         inst_id;    /*!< @brief The instance ID component of the GATT ID, providing further differentiation of the GATT ID. */
-} __attribute__((packed)) esp_gatt_id_t;
+}
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((packed))
+#endif
+esp_gatt_id_t;
 
 
 /**
@@ -356,7 +360,11 @@ typedef struct {
 typedef struct {
     esp_gatt_id_t   id;            /*!< @brief Encapsulates the UUID and instance ID of the GATT service. */
     bool            is_primary;    /*!< @brief Indicates if the service is primary. A value of true means it is a primary service, false indicates a secondary service. */
-} __attribute__((packed)) esp_gatt_srvc_id_t;
+}
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((packed))
+#endif
+esp_gatt_srvc_id_t;
 
 /**
  * @brief Defines the GATT authentication request types.

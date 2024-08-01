@@ -111,7 +111,7 @@ static void adjtime_corr_stop(void)
 #define WEAK_UNLESS_TIMEFUNC_IMPL __attribute__((weak))
 #endif
 
-WEAK_UNLESS_TIMEFUNC_IMPL int adjtime(const struct timeval *delta, struct timeval *outdelta)
+WEAK_UNLESS_TIMEFUNC_IMPL int /**/adjtime(const struct timeval *delta, struct timeval *outdelta)
 {
 #if IMPL_NEWLIB_TIME_FUNCS
     if (outdelta != NULL) {
@@ -164,7 +164,7 @@ clock_t IRAM_ATTR _times_r(struct _reent *r, struct tms *ptms)
     return (clock_t) tv.tv_sec;
 }
 
-WEAK_UNLESS_TIMEFUNC_IMPL int IRAM_ATTR _gettimeofday_r(struct _reent *r, struct timeval *tv, void *tz)
+WEAK_UNLESS_TIMEFUNC_IMPL int IRAM_ATTR /**/_gettimeofday_r(struct _reent *r, struct timeval *tv, void *tz)
 {
     (void) tz;
 
@@ -181,7 +181,7 @@ WEAK_UNLESS_TIMEFUNC_IMPL int IRAM_ATTR _gettimeofday_r(struct _reent *r, struct
 #endif
 }
 
-WEAK_UNLESS_TIMEFUNC_IMPL int settimeofday(const struct timeval *tv, const struct timezone *tz)
+WEAK_UNLESS_TIMEFUNC_IMPL int /**/settimeofday(const struct timeval *tv, const struct timezone *tz)
 {
     (void) tz;
 #if IMPL_NEWLIB_TIME_FUNCS

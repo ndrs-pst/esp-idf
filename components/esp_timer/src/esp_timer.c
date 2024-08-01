@@ -314,7 +314,7 @@ esp_err_t esp_timer_delete(esp_timer_handle_t timer)
     return err;
 }
 
-static IRAM_ATTR esp_err_t timer_insert(esp_timer_handle_t timer, bool without_update_alarm)
+static IRAM_ATTR esp_err_t /**/timer_insert(esp_timer_handle_t timer, bool without_update_alarm)
 {
 #if WITH_PROFILING
     timer_remove_inactive(timer);

@@ -74,7 +74,7 @@ int64_t IRAM_ATTR esp_timer_impl_get_time(void)
 
 int64_t esp_timer_get_time(void) __attribute__((alias("esp_timer_impl_get_time")));
 
-void IRAM_ATTR esp_timer_impl_set_alarm_id(uint64_t timestamp, unsigned alarm_id)
+void IRAM_ATTR /**/esp_timer_impl_set_alarm_id(uint64_t timestamp, unsigned alarm_id)
 {
     assert(alarm_id < sizeof(timestamp_id) / sizeof(timestamp_id[0]));
     portENTER_CRITICAL_SAFE(&s_time_update_lock);

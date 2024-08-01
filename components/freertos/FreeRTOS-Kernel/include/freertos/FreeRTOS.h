@@ -85,7 +85,9 @@
  *
  * See the third party link http://www.nadler.com/embedded/newlibAndFreeRTOS.html
  * for additional information. */
+    #if defined(__GNUC__) /* #CUSTOM@NDRS */
     #include <reent.h>
+    #endif
 
     #define configUSE_C_RUNTIME_TLS_SUPPORT    1
 

@@ -1,3 +1,10 @@
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+#include <sys/param.h>
+#else
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#endif
+
 #include "sdkconfig.h"
 
 /*---------------------------------------------------------------------------/
@@ -318,7 +325,9 @@
 /   1: Enable dynamic buffer size and use ff_memmalloc() to allocate buffers.
 */
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #include <sys/param.h>
+#endif
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
