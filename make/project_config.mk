@@ -165,6 +165,7 @@ $(SDKCONFIG_MAKEFILE) $(BUILD_DIR_BASE)/include/sdkconfig.h: $(SDKCONFIG) $(COMP
 	$(summary) GENCONFIG
 	$(call RunConfGen,)
 	touch $(SDKCONFIG_MAKEFILE) $(BUILD_DIR_BASE)/include/sdkconfig.h  # ensure newer than sdkconfig
+	cp $(BUILD_DIR_BASE)/include/sdkconfig.h $(PROJECT_PATH)/main/02.cfg/sdkconfig.h # #CUSTOM@NDRS
 
 else  # "$(MAKE_RESTARTS)" != ""
 # on subsequent make passes, skip config generation entirely

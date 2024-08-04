@@ -78,7 +78,7 @@
 #define configTICK_RATE_HZ                              ( CONFIG_FREERTOS_HZ )
 
 /* This has impact on speed of search for highest priority */
-#define configMAX_PRIORITIES                            ( 25 )
+#define configMAX_PRIORITIES            				(8)         // #CUSTOM@NDRS : Then posible task priority is 0 ~ 7
 
 /* Various things that impact minimum stack sizes */
 

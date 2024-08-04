@@ -6,7 +6,9 @@
 
 #pragma once
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #include "esp_vfs.h"
+#endif
 #include "esp_vfs_common.h"
 
 #ifdef __cplusplus
@@ -34,7 +36,11 @@ void esp_vfs_dev_uart_register(void);
  *
  * @param mode line endings expected on UART
  */
-void esp_vfs_dev_uart_set_rx_line_endings(esp_line_endings_t mode) __attribute__((deprecated));
+void esp_vfs_dev_uart_set_rx_line_endings(esp_line_endings_t mode)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief Set the line endings to sent to UART
@@ -50,7 +56,11 @@ void esp_vfs_dev_uart_set_rx_line_endings(esp_line_endings_t mode) __attribute__
  *
  * @param mode line endings to send to UART
  */
-void esp_vfs_dev_uart_set_tx_line_endings(esp_line_endings_t mode) __attribute__((deprecated));
+void esp_vfs_dev_uart_set_tx_line_endings(esp_line_endings_t mode)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 /**
  * @brief Set the line endings expected to be received on specified UART

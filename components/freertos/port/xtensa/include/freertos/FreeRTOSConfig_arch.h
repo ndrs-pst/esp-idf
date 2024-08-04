@@ -30,7 +30,11 @@
  * Update the code to use esp_clk_cpu_freq function instead.
  * @return current CPU clock frequency, in Hz
  */
-int xt_clock_freq(void) __attribute__((deprecated));
+int xt_clock_freq(void)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+;
 
 #define XT_CLOCK_FREQ   (xt_clock_freq())
 

@@ -10,7 +10,9 @@
 extern "C" {
 #endif
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #warning driver/can.h is deprecated, please use driver/twai.h instead
+#endif
 
 #include "hal/can_types.h"
 #include "driver/twai.h"

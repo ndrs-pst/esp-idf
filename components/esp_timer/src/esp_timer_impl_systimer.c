@@ -69,7 +69,7 @@ int64_t IRAM_ATTR esp_timer_impl_get_time(void)
 
 int64_t esp_timer_get_time(void) __attribute__((alias("esp_timer_impl_get_time")));
 
-void IRAM_ATTR esp_timer_impl_set_alarm_id(uint64_t timestamp, unsigned alarm_id)
+void IRAM_ATTR /**/esp_timer_impl_set_alarm_id(uint64_t timestamp, unsigned alarm_id)
 {
     static uint64_t timestamp_id[2] = { UINT64_MAX, UINT64_MAX };
     portENTER_CRITICAL_SAFE(&s_time_update_lock);

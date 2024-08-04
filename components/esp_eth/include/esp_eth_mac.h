@@ -377,7 +377,7 @@ typedef struct {
     int smi_mdc_gpio_num;                /*!< SMI MDC GPIO number, set to -1 could bypass the SMI GPIO configuration */
     int smi_mdio_gpio_num;               /*!< SMI MDIO GPIO number, set to -1 could bypass the SMI GPIO configuration */
     uint32_t flags;                      /*!< Flags that specify extra capability for mac driver */
-    eth_data_interface_t interface;      /*!< EMAC Data interface to PHY (MII/RMII) */
+    eth_data_interface_t _interface;     /*!< EMAC Data interface to PHY (MII/RMII) */
     eth_mac_clock_config_t clock_config; /*!< EMAC Interface clock configuration */
 } eth_mac_config_t;
 
