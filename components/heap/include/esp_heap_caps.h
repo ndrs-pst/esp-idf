@@ -73,7 +73,10 @@ esp_err_t heap_caps_register_failed_alloc_callback(esp_alloc_failed_hook_t callb
  * @note this hook is called on the same thread as the allocation, which may be within a low level operation.
  * You should refrain from doing heavy work, logging, flash writes, or any locking.
  */
-__attribute__((weak)) HEAP_IRAM_ATTR void esp_heap_trace_alloc_hook(void* ptr, size_t size, uint32_t caps);
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((weak))
+#endif
+HEAP_IRAM_ATTR void esp_heap_trace_alloc_hook(void* ptr, size_t size, uint32_t caps);
 
 /**
  * @brief callback called after every free
@@ -81,7 +84,10 @@ __attribute__((weak)) HEAP_IRAM_ATTR void esp_heap_trace_alloc_hook(void* ptr, s
  * @note this hook is called on the same thread as the allocation, which may be within a low level operation.
  * You should refrain from doing heavy work, logging, flash writes, or any locking.
  */
-__attribute__((weak)) HEAP_IRAM_ATTR void esp_heap_trace_free_hook(void* ptr);
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((weak))
+#endif
+HEAP_IRAM_ATTR void esp_heap_trace_free_hook(void* ptr);
 #endif
 
 /**
@@ -150,7 +156,11 @@ void *heap_caps_aligned_alloc(size_t alignment, size_t size, uint32_t caps);
  * @param ptr Pointer to the memory allocated
  * @note This function is deprecated, please consider using heap_caps_free() instead
  */
-void __attribute__((deprecated))  heap_caps_aligned_free(void *ptr);
+void
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated))
+#endif
+heap_caps_aligned_free(void *ptr);
 
 /**
  * @brief Allocate an aligned chunk of memory which has the given capabilities. The initialized value in the memory is set to zero.

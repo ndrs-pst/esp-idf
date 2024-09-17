@@ -11,12 +11,16 @@
 #include "sdkconfig.h"
 #include <string.h>     // For memcpy
 #include <stdlib.h>     // For malloc/free
+
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 #include <unistd.h>
 #include <sys/fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/poll.h>
+#endif
+
 #include "esp_task.h"
 #include "esp_random.h"
 #include "sdkconfig.h"

@@ -53,6 +53,14 @@ else()
     )
 endif()
 
+# #CUSTOM@NDRS
+set(include_dirs include)
+if (($ENV{MY_TARGET} STREQUAL TARGET_EMU_H17WF) OR
+    ($ENV{MY_TARGET} STREQUAL TARGET_LCU_I18WF))
+    list(APPEND include_dirs $ENV{MY_PRJ_DIR}/main/01.inc/
+)
+endif()
+
 idf_component_register(SRCS "${srcs}"
                     REQUIRES hal
                     PRIV_REQUIRES "${priv_requires}"

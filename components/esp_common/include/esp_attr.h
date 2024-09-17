@@ -19,6 +19,7 @@ extern "C" {
 //and all variables in shared RAM. These macros can be used to redirect
 //particular functions/variables to other memory regions.
 
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
 // Forces code into IRAM instead of flash
 #define IRAM_ATTR _SECTION_ATTR_IMPL(".iram1", __COUNTER__)
 
@@ -53,6 +54,16 @@ extern "C" {
 
 #define IRAM_BSS_ATTR
 #endif
+#else
+#define IRAM_ATTR
+#define DRAM_ATTR
+#define TCM_IRAM_ATTR
+#define TCM_DRAM_ATTR
+#define COREDUMP_IRAM_DATA_ATTR
+#define IRAM_DATA_ATTR
+
+#define IRAM_BSS_ATTR
+#endif /* #CUSTOM@NDRS */
 
 // Forces data to be 4 bytes aligned
 #define WORD_ALIGNED_ATTR __attribute__((aligned(4)))
@@ -77,7 +88,7 @@ extern "C" {
 // Use as esp_rom_printf(DRAM_STR("Hello world!\n"));
 #define DRAM_STR(str) (__extension__({static const DRAM_ATTR char __c[] = (str); (const char *)&__c;}))
 
-#if CONFIG_SOC_RTC_FAST_MEM_SUPPORTED || CONFIG_SOC_RTC_SLOW_MEM_SUPPORTED
+#if (CONFIG_SOC_RTC_FAST_MEM_SUPPORTED || CONFIG_SOC_RTC_SLOW_MEM_SUPPORTED) && defined(__GNUC__) /* #CUSTOM@NDRS */
 // Forces data into RTC memory. See "docs/deep-sleep-stub.rst"
 // Any variable marked with this attribute will keep its value
 // during a deep sleep / wake cycle.

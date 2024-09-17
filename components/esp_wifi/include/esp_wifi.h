@@ -6,7 +6,7 @@
 
 /*               Notes about WiFi Programming
  *
- *  WiFi programming model can be depicted as following picture:
+ *  Wi-Fi programming model can be depicted as following picture:
  *
  *
  *                            default handler              user handler
@@ -975,7 +975,7 @@ esp_err_t esp_wifi_get_promiscuous_ctrl_filter(wifi_promiscuous_filter_t *filter
   *    - ESP_ERR_WIFI_NVS: WiFi internal NVS error
   *    - others: refer to the error code in esp_err.h
   */
-esp_err_t esp_wifi_set_config(wifi_interface_t interface, wifi_config_t *conf);
+esp_err_t esp_wifi_set_config(wifi_interface_t iface, wifi_config_t *conf);     /* #CUSTOM@NDRS */
 
 /**
   * @brief     Get configuration of specified interface
@@ -989,7 +989,7 @@ esp_err_t esp_wifi_set_config(wifi_interface_t interface, wifi_config_t *conf);
   *    - ESP_ERR_INVALID_ARG: invalid argument
   *    - ESP_ERR_WIFI_IF: invalid interface
   */
-esp_err_t esp_wifi_get_config(wifi_interface_t interface, wifi_config_t *conf);
+esp_err_t esp_wifi_get_config(wifi_interface_t iface, wifi_config_t *conf);     /* #CUSTOM@NDRS */
 
 /**
  * @brief Forward declare wifi_sta_list_t. The definition depends on the target device
@@ -1250,7 +1250,11 @@ esp_err_t esp_wifi_set_csi(bool en);
   *    - ESP_ERR_WIFI_NOT_INIT: WiFi is not initialized by esp_wifi_init
   *    - ESP_ERR_INVALID_ARG: Invalid argument, e.g. parameter is NULL, invalid GPIO number etc
   */
-esp_err_t esp_wifi_set_ant_gpio(const wifi_ant_gpio_config_t *config) __attribute__((deprecated("Please use esp_phy_set_ant_gpio instead")));
+esp_err_t esp_wifi_set_ant_gpio(const wifi_ant_gpio_config_t *config)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated("Please use esp_phy_set_ant_gpio instead")))
+#endif
+;
 
 /**
   * @brief     Get current antenna GPIO configuration
@@ -1262,7 +1266,11 @@ esp_err_t esp_wifi_set_ant_gpio(const wifi_ant_gpio_config_t *config) __attribut
   *    - ESP_ERR_WIFI_NOT_INIT: WiFi is not initialized by esp_wifi_init
   *    - ESP_ERR_INVALID_ARG: invalid argument, e.g. parameter is NULL
   */
-esp_err_t esp_wifi_get_ant_gpio(wifi_ant_gpio_config_t *config) __attribute__((deprecated("Please use esp_phy_get_ant_gpio instead")));
+esp_err_t esp_wifi_get_ant_gpio(wifi_ant_gpio_config_t *config)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated("Please use esp_phy_get_ant_gpio instead")));
+#endif
+;
 
 /**
   * @brief     Set antenna configuration
@@ -1274,7 +1282,11 @@ esp_err_t esp_wifi_get_ant_gpio(wifi_ant_gpio_config_t *config) __attribute__((d
   *    - ESP_ERR_WIFI_NOT_INIT: WiFi is not initialized by esp_wifi_init
   *    - ESP_ERR_INVALID_ARG: Invalid argument, e.g. parameter is NULL, invalid antenna mode or invalid GPIO number
   */
-esp_err_t esp_wifi_set_ant(const wifi_ant_config_t *config) __attribute__((deprecated("Please use esp_phy_set_ant instead")));
+esp_err_t esp_wifi_set_ant(const wifi_ant_config_t *config)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated("Please use esp_phy_set_ant instead")))
+#endif
+;
 
 /**
   * @brief     Get current antenna configuration
@@ -1286,7 +1298,11 @@ esp_err_t esp_wifi_set_ant(const wifi_ant_config_t *config) __attribute__((depre
   *    - ESP_ERR_WIFI_NOT_INIT: WiFi is not initialized by esp_wifi_init
   *    - ESP_ERR_INVALID_ARG: invalid argument, e.g. parameter is NULL
   */
-esp_err_t esp_wifi_get_ant(wifi_ant_config_t *config) __attribute__((deprecated("Please use esp_phy_get_ant instead")));
+esp_err_t esp_wifi_get_ant(wifi_ant_config_t *config)
+#if defined(__GNUC__) /* #CUSTOM@NDRS */
+__attribute__((deprecated("Please use esp_phy_get_ant instead")));
+#endif
+;
 
 /**
  * @brief      Get the TSF time
