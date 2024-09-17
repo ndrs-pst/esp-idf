@@ -614,6 +614,8 @@ int spi_bus_frequency(spi_device_handle_t handle, int hz) {
     int duty_cycle;
     int use_gpio;
     int freq;
+    spi_clock_source_t clk_src;
+    uint32_t clk_src_hz;
     esp_err_t err;
 
     dev_cfg  = &handle->cfg;
@@ -648,18 +650,27 @@ int spi_bus_frequency(spi_device_handle_t handle, int hz) {
         use_gpio = 1;
     }
 
+    clk_src = SPI_CLK_SRC_DEFAULT;
+    clk_src_hz = 0;
+    esp_clk_tree_src_get_freq_hz(clk_src, ESP_CLK_TREE_SRC_FREQ_PRECISION_APPROX, &clk_src_hz);
+
+    timing_param.clk_src_hz     = clk_src_hz;
     timing_param.half_duplex    = half_duplex;
     timing_param.no_compensate  = no_compensate;
-    timing_param.clock_speed_hz = hz;
+    timing_param.expected_freq  = hz;
     timing_param.duty_cycle     = duty_cycle;
     timing_param.input_delay_ns = dev_cfg->input_delay_ns;
     timing_param.use_gpio       = use_gpio;
 
     // Output values of timing configuration
-    err = spi_hal_cal_clock_conf(&timing_param, &freq, &temp_timing_conf);
+    err = spi_hal_cal_clock_conf(&timing_param, &temp_timing_conf);
     if (err == ESP_OK) {
         handle->hal_dev.timing_conf = temp_timing_conf;
         dev_cfg->clock_speed_hz     = hz;
+        freq = temp_timing_conf.real_freq;
+    }
+    else {
+        freq = 0;
     }
 
     return (freq);
@@ -1279,7 +1290,8 @@ esp_err_t spi_device_set_duplex(spi_device_handle_t handle, bool _half_duplex) {
     int no_compensate;
     int duty_cycle;
     int use_gpio;
-    int freq;
+    spi_clock_source_t clk_src;
+    uint32_t clk_src_hz;
     esp_err_t err;
 
     dev_cfg = &handle->cfg;
@@ -1314,15 +1326,20 @@ esp_err_t spi_device_set_duplex(spi_device_handle_t handle, bool _half_duplex) {
         use_gpio = 1;
     }
 
+    clk_src = SPI_CLK_SRC_DEFAULT;
+    clk_src_hz = 0;
+    esp_clk_tree_src_get_freq_hz(clk_src, ESP_CLK_TREE_SRC_FREQ_PRECISION_APPROX, &clk_src_hz);
+
+    timing_param.clk_src_hz     = clk_src_hz;
     timing_param.half_duplex    = half_duplex;
     timing_param.no_compensate  = no_compensate;
-    timing_param.clock_speed_hz = dev_cfg->clock_speed_hz;
+    timing_param.expected_freq  = dev_cfg->clock_speed_hz;
     timing_param.duty_cycle     = duty_cycle;
     timing_param.input_delay_ns = dev_cfg->input_delay_ns;
     timing_param.use_gpio       = use_gpio;
 
     // Output values of timing configuration
-    err = spi_hal_cal_clock_conf(&timing_param, &freq, &temp_timing_conf);
+    err = spi_hal_cal_clock_conf(&timing_param, &temp_timing_conf);
     if (err == ESP_OK) {
         handle->hal_dev.timing_conf = temp_timing_conf;
     }
