@@ -835,8 +835,14 @@ esp_err_t i2c_param_config(i2c_port_t i2c_num, const i2c_config_t *i2c_conf)
 
 /* CUSTOM@NDRS */
 void i2c_bus_frequency(i2c_port_t i2c_num, int hz) {
+    i2c_clock_source_t clk_src;
+    uint32_t clk_freq;
+
+    clk_src  = I2C_CLK_SRC_DEFAULT;
+    clk_freq = s_get_src_clk_freq(clk_src);
+
     I2C_ENTER_CRITICAL(&(i2c_context[i2c_num].spinlock));
-    i2c_hal_set_bus_timing(&(i2c_context[i2c_num].hal), hz, I2C_SCLK_DEFAULT);
+    i2c_hal_set_bus_timing(&(i2c_context[i2c_num].hal), hz, clk_src, clk_freq);
     I2C_EXIT_CRITICAL(&(i2c_context[i2c_num].spinlock));
 }
 
